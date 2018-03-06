@@ -1,0 +1,47 @@
+{% extends "../base.html" %}
+
+{% block body %}
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">系统设置</a>
+                <a class="this-page" href="">加密方式</a>
+                <a><cite>编辑</cite></a>
+            </span>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md8 layui-col-md-offset1">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>编辑加密方式</legend>
+                </fieldset>
+                <form class="layui-form" action="/base/sign_update/" method="post">
+                    <input name="sign_id" value ={{sign.sign_id }} hidden>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">加密方式名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="sign_name" value={{ sign.sign_name }} lay-verify="title" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">加密方式描述</label>
+                        <div class="layui-input-block">
+                            <textarea name="description"  class="layui-textarea">{{ sign.description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="demo1">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

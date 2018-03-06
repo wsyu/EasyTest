@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EasyTest-自动化测试平台</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+
+    {% block css %}{% endblock %}
+
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div class="layui-header">
+        <div class="layui-logo">
+            <span>EasyTest-测试平台</span></div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <div class="weather layui-logo" pc>
+                <div id="tp-weather-widget"></div>
+                <script>(function (T, h, i, n, k, P, a, g, e) {
+                    g = function () {
+                        P = h.createElement(i);
+                        a = h.getElementsByTagName(i)[0];
+                        P.src = k;
+                        P.charset = "utf-8";
+                        P.async = 1;
+                        a.parentNode.insertBefore(P, a)
+                    };
+                    T["ThinkPageWeatherWidgetObject"] = n;
+                    T[n] || (T[n] = function () {
+                        (T[n].q = T[n].q || []).push(arguments)
+                    });
+                    T[n].l = +new Date();
+                    if (T.attachEvent) {
+                        T.attachEvent("onload", g)
+                    } else {
+                        T.addEventListener("load", g, false)
+                    }
+                }(window, document, "script", "tpwidget", "//widget.seniverse.com/widget/chameleon.js"))</script>
+                <script>tpwidget("init", {
+                    "flavor": "slim",
+                    "location": "WX4FBXXFKE4F",
+                    "geolocation": "enabled",
+                    "language": "zh-chs",
+                    "unit": "c",
+                    "theme": "chameleon",
+                    "container": "tp-weather-widget",
+                    "bubble": "disabled",
+                    "alarmType": "badge",
+                    "color": "#FFFFFF",
+                    "uid": "U9EC08A15F",
+                    "hash": "039da28f5581f4bcb5c799fb4cdfb673"
+                });
+                tpwidget("show");</script>
+            </div>
+        </ul>
+
+        <ul class="layui-nav layui-layout-right">
+
+            <li class="layui-nav-item">
+                <a href="javascript:;">你好, admin</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">
+                    <i class="iconfont icon-loginout"></i>注销
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item">
+                    <a class="" href="/index">主页</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" id="WEBUI" href="javascript:;">基础信息</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/base/project">项目管理</a></dd>
+                        <dd><a href="/base/env">测试环境</a> </dd>
+                        <dd><a href="/base/interface">接口管理</a> </dd>
+                        <dd><a href="/base/case">用例管理</a> </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">系统设置</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/base/sign">加密方式</a> </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    {% block body %}
+    <!-- 内容主体区域 -->
+    <div class="layui-body">
+
+        <div style="padding: 15px;">内容主体区域</div>
+    </div>
+
+    {% endblock %}
+
+
+</div>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/jquery-1.10.2.min.js"></script>
+
+{% block js %}{% endblock %}
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('form', function () {
+        var form = layui.form;
+
+    });
+</script>
+
+
+<script>
+$(document).ready(function(){
+  var a_name = $("a.this").text();
+  var page_name = $("a.this-page").text();
+  if(a_name){
+      $("a:contains("+ a_name + ")").parent('.layui-nav-item').addClass("layui-nav-itemed");
+      if(page_name){
+          $("a:contains("+ page_name + ")").parent().addClass("layui-this");
+      }
+  }
+});
+</script>
+
+{% block script %}{% endblock %}
+
+
+</body>
+</html>

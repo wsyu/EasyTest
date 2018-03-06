@@ -1,0 +1,62 @@
+{% extends "../../base.html" %}
+
+{% block body %}
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">基础信息</a>
+                <a class="this-page">测试环境</a>
+            </span>
+        </div>
+
+        <div style="padding: 15px;">
+            <a href="/base/env_add" class="layui-btn">
+                <i class="layui-icon">&#xe608;</i> 添加测试环境
+            </a>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="30">
+                    <col width="200">
+                    <col width="250">
+                    <col width="200">
+                    <col width="200">
+                    <col width="150">
+                    <col width="250">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>测试环境</th>
+                    <th>url</th>
+                    <th>所属项目</th>
+                    <th>密钥</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for env in env_list %}
+                    <tr>
+                        <td>{{ env.env_id }}</td>
+                        <td>{{ env.env_name }}</td>
+                        <td>{{ env.url }}</td>
+                        <td>{{ env.project }}</td>
+                        <td>{{ env.private_key }}</td>
+                        <td>{{ env.description }}</td>
+                        <td>
+                            <a href="/project_update?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                            <a href="/project_delete?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+{% endblock %}

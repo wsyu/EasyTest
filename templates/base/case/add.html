@@ -1,0 +1,181 @@
+{% extends "../../base.html" %}
+
+{% block body %}
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">基础信息</a>
+                <a class="this-page" href="">用例管理</a>
+                <a><cite>添加用例</cite></a>
+            </span>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md8 layui-col-md-offset1">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>添加用例</legend>
+                </fieldset>
+                <div class="layui-form">
+                    <!--
+                    <form class="layui-form" action="/base/interface_add/" method="post">
+                    -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用例名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="case_name" lay-verify="title" autocomplete="off"
+                                   placeholder="请输入名称"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">所属项目</label>
+                        <div class="layui-input-block">
+                            <select id="prj_id" name="prj_id" lay-filter="get_api">
+                                {% for prj in prj_list %}
+                                    <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">接口描述</label>
+                        <div class="layui-input-block">
+                            <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <from class='layui-form'>
+                                <div class='layui-form'>
+                                    <div class='layui-inline'>
+                                        <select id="if_id">
+                                            <option value="">请选择接口</option>
+                                        </select>
+                                    </div>
+                                    <div class='layui-inline'>
+                                        <button id="add_interface" onclick="add_interface(this)" class='layui-btn'>确定
+                                        </button>
+                                    </div>
+                                </div>
+                            </from>
+                            <br>
+                            <div id="case_content">
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" id="sumbit">立即提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+{% block script %}
+
+    <script>
+    layui.use(['element', 'layer'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+
+        //监听折叠
+        element.on('collapse(test)', function (data) {
+            layer.msg('展开状态：' + data.show);
+        });
+    });
+
+    layui.use('form', function () {
+            var form = layui.form;
+            //获取接口列表
+            form.on('select(get_api)', function () {
+                $("#if_id").empty();
+                var prj_id = $("#prj_id").val();
+                if (prj_id == null) {
+                    alert("请先选择项目");
+                }
+                else {
+                    $.ajax({
+                        type: "get",
+                        url: "/base/findata/",
+                        data: {
+                            "prj_id": prj_id,
+                            "type": "get_all_if_by_prj_id"
+                        },
+                        success: function (data) {
+                            var jsondata = eval(data);
+                            $.each(jsondata, function (i, item) {
+                                $("#if_id").append("<option value=" + item.if_id + ">" + item.if_name + "</option>");
+                                form.render();
+                            });
+                        },
+                        error: function () {
+                            alert("获取接口失败！");
+                        }
+                    });
+                }
+            });
+
+        });
+</script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            //添加请求头参数行
+            $("#add_interface").click(function () {
+                var if_id = $("#if_id").val();
+                if (if_id == "") {
+                    alert("请先选择接口");
+                }
+                else {
+                    $.ajax({
+                        url: "/base/findata/",
+                        type: "get",
+                        data: {
+                            "if_id": if_id,
+                            "type": "get_if_by_if_id",
+                        },
+                        // dataType: "json",
+                        success: function (data) {
+                            var jsondata = eval(data);
+                            $.each(jsondata, function (i, item) {
+
+                                var newinterface = "<div name='interface' class='layui-collapse' lay-accordion=''> " +
+                                    "<div class='layui-colla-item' id='" + item.if_id + "'> <h2 class='layui-colla-title'>" + item.if_name + "</h2> " +
+                                    "<div class='layui-colla-content layui-show'> <div class='layui-btn-group demoTable'> " +
+                                    "<button class='layui-btn' onclick='add_header_row(this)' data-type='getCheckData'>添加header参数 </button> " +
+                                    "<button class='layui-btn' onclick='add_body_row(this)' data-type='getCheckData'>添加body参数 </button> " +
+                                    "<button class='layui-btn' onclick='del_interface(this)'>删除接口</button> <br> </div> " +
+                                    "<div class='layui-colla-content layui-show'> <div class='layui-collapse' lay-accordion=''> " +
+                                    "<div class='layui-colla-item header'> <h2 class='layui-colla-title'>header</h2> " +
+                                    "<div class='layui-colla-content layui-show'> <table name='header' class='layui-table'> <thead> <tr> " +
+                                    "<th>参数</th> <th>值</th> <th></th> </tr> </thead> <tbody> </tbody> </table> </div> </div> " +
+                                    "<div class='layui-colla-item'> <h2 class='layui-colla-title'>body</h2> " +
+                                    "<div class='layui-colla-content layui-show'> <table name='body' class='layui-table'> <thead> <tr> " +
+                                    "<th>参数</th> <th>值</th> <th></th> </tr> </thead> <tbody> </tbody> </table> </div> </div> </div> </div> " +
+                                    "</div> </div><br></div>";
+                                $("#case_content").append(newinterface);
+                            });
+                        },
+                        error: function () {
+                            alert("error!");
+                        }
+                    });
+                }
+            });
+
+            //删除行
+        });
+    </script>
+{% endblock %}

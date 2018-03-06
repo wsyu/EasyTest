@@ -1,0 +1,57 @@
+{% extends "../../base.html" %}
+
+{% block body %}
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">基础信息</a>
+                <a class="this-page">接口管理</a>
+            </span>
+        </div>
+
+        <div style="padding: 15px;">
+            <a href="/base/interface_add" class="layui-btn">
+                <i class="layui-icon">&#xe608;</i> 添加接口
+            </a>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="30">
+                    <col width="300">
+                    <col width="300">
+                    <col width="300">
+                    <col width="400">
+
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>接口名称</th>
+                    <th>所属项目</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for if in if_list %}
+                    <tr>
+                        <td>{{ if.if_id }}</td>
+                        <td>{{ if.if_name }}</td>
+                        <td>{{ if.project }}</td>
+                        <td>{{ if.description }}</td>
+                        <td>
+                            <a href="/project_update?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                            <a href="/project_delete?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+{% endblock %}

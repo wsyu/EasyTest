@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>EasyTest-自动化测试平台</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/vendor/linearicons/style.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="/static/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/img/favicon.png">
+
+    {% block css %}{% endblock %}
+
+</head>
+
+<body>
+<!-- WRAPPER -->
+<div id="wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="brand">
+            <a href="index.html"><img src="/static/img/logo-dark.png" alt="Klorofil Logo"
+                                      class="img-responsive logo"></a>
+        </div>
+        <div class="container-fluid">
+            <div class="navbar-btn">
+                <button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
+            </div>
+            <div id="navbar-menu">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="/static/img/user.png"
+                                                                                        class="img-circle" alt="Avatar">
+                            <span>Samuel</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>
+                            <li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>
+                            <li><a href="#"><i class="lnr lnr-cog"></i> <span>Settings</span></a></li>
+                            <li><a href="#"><i class="lnr lnr-exit"></i> <span>Logout</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebar-nav" class="sidebar">
+        <div class="sidebar-scroll">
+            <nav>
+                <ul class="nav">
+                    <li><a href="/index" class=""><i class="lnr lnr-home"></i> <span>主页</span></a></li>
+                    <li>
+                        <a href="#baseinfo" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i>
+                            <span>基础信息</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+                        <div id="baseinfo" class="collapse ">
+                            <ul class="nav">
+                                <li><a href="/base/project/" class="">项目管理</a></li>
+                                <li><a href="page-login.html" class="">测试环境管理</a></li>
+                                <li><a href="page-lockscreen.html" class="">接口管理</a></li>
+                                <li><a href="page-lockscreen.html" class="">用例管理</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#system" data-toggle="collapse" class="collapsed"><i class="lnr lnr-cog"></i> <span>系统设置</span>
+                            <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+                        <div id="system" class="collapse ">
+                            <ul class="nav">
+                                <li><a href="page-profile.html" class="">签名方式</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- END LEFT SIDEBAR -->
+    <!-- MAIN -->
+    <div class="main">
+        <div class="main-content">
+            <div class="container-fluid">
+                {% block crumbs %}
+                {% endblock %}
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/static/scripts/klorofil-common.js"></script>
+<script>
+    $(document).ready(function () {
+        var a_name = $("a.this").text();
+        var page_name = $("a.this-page").text();
+        if (a_name) {
+            $("span:contains(" + a_name + ")").parent('a').removeClass("collapsed");
+            $("span:contains(" + a_name + ")").parent('a').addClass("active");
+            if (page_name){
+                $("a:contains(" + page_name + ")").parent('li').parent('ul').parent('div').removeClass("collapse");
+                $("a:contains(" + page_name + ")").parent('li').parent('ul').parent('div').addClass("collapse in");
+                $("a:contains(" + page_name + ")").addClass("active");
+            }
+        }
+    });
+</script>
+{% block javascript %} {% endblock %}
+</body>
+
+</html>

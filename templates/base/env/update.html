@@ -1,0 +1,72 @@
+{% extends "../../base.html" %}
+
+{% block body %}
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">基础信息</a>
+                <a class="this-page" href="">测试环境</a>
+                <a><cite>编辑测试环境</cite></a>
+            </span>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md8 layui-col-md-offset1">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>编辑测试环境</legend>
+                </fieldset>
+                <form class="layui-form" action="/base/env_update/" method="post">
+                <input name="env_id" value ={{env.env_id }} hidden>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">测试环境名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="env_name" lay-verify="title" autocomplete="off" value={{ env.env_name }}
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">所属项目</label>
+                        <div class="layui-input-block">
+                            <select name="prj_id" lay-filter="aihao">
+                                <option value={{ env.project_id }}>{{ env.project }}</option>
+                                {% for prj in prj_list %}
+                                    <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">URL</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="url" value={{ env.url }} class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密钥</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="private_key" value={{ env.private_key }} class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">测试环境描述</label>
+                        <div class="layui-input-block">
+                            <textarea name="description"  class="layui-textarea">{{ env.description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="demo1">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

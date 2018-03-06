@@ -1,0 +1,62 @@
+{% extends "../../base.html" %}
+
+{% block crumbs %}
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/yqjr/index">主页</a>
+                </li>
+                <li class="active">
+                    <a class="this">基础信息</a>
+                </li>
+                <li class="active">
+                    <a class="this-page">项目管理</a>
+                </li>
+            </ol>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading">
+                   <a href="/base/project_add" class="btn btn-info">创建项目</a>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>项目名称</th>
+                            <th>项目描述</th>
+                            <th>加密方式</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for prj in prj_list %}
+                            <tr>
+                                <td>{{ prj.prj_id }}</td>
+                                <td>{{ prj.prj_name }}</td>
+                                <td>{{ prj.description }}</td>
+                                <td>{{ prj.sign }}</td>
+                                <td>
+                                    <a href="/project_update?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-xs"
+                                       lay-event="edit">编辑</a>
+                                    <a href="/project_delete?prj_id={{ prj.prj_id }}"
+                                       class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
