@@ -1,53 +1,60 @@
 {% extends "../base.html" %}
 
+{% block crumbs %}
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/yqjr/index">主页</a>
+                </li>
+                <li class="active">
+                    <a class="this">系统设置</a>
+                </li>
+                <li class="active">
+                    <a class="this-page">签名方式</a>
+                </li>
+            </ol>
+
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
 
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">
-            <span class="layui-breadcrumb">
-                <a href="">首页</a>
-                <a class="this" href="">系统设置</a>
-                <a class="this-page">签名方式</a>
-            </span>
-        </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-heading">
+                    <a href="/base/sign_add/" class="btn btn-primary">添加</a>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sign in sign_list %}
+                            <tr>
+                                <td>{{ sign.sign_id }}</td>
+                                <td>{{ sign.sign_name }}</td>
+                                <td>{{ sign.description }}</td>
+                                <td>
+                                    <a href="/sign_update?sign_id={{ sign.sign_id }}" class="">编辑</a>
+                                    <a href="" class="" >删除</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-        <div style="padding: 15px;">
-            <a href="/base/sign_add" class="layui-btn">
-                <i class="layui-icon">&#xe608;</i> 添加
-            </a>
-            <table class="layui-table">
-                <colgroup>
-                    <col width="30">
-                    <col width="200">
-                    <col width="200">
-                    <col width="300">
-                    <col>
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>名称</th>
-                    <th>描述</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for sign in sign_list %}
-                    <tr>
-                        <td>{{ sign.sign_id }}</td>
-                        <td>{{ sign.sign_name }}</td>
-                        <td>{{ sign.description }}</td>
-                        <td>
-                            <a href="/sign_update?sign_id={{ sign.sign_id }}" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-                            <a href="/project_delete?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
         </div>
-
     </div>
 
 {% endblock %}
