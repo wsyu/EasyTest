@@ -445,7 +445,7 @@ ul.list-justify > li {
   -moz-border-radius: 2px;
   border-radius: 2px;
   border-color: #eaeaea;
-  background-color: #fcfcfc; }
+  background-color: #fff; }
   .form-control:focus {
     -moz-box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.1);
@@ -581,11 +581,11 @@ ul.list-justify > li {
   padding: 5px 14px; }
 
 .btn-primary {
-  background-color: #00AAFF;
-  border-color: #00a0f0; }
+  background-color: #1dc5a3;
+  border-color: #1dc5a3; }
   .btn-primary:hover, .btn-primary:focus {
-    background-color: #00a0f0;
-    border-color: #00a0f0; }
+    background-color: #1dc5a3;
+    border-color: #1dc5a3; }
 
 .btn-warning {
   background-color: #e4cb10;
@@ -620,7 +620,8 @@ fieldset[disabled] .btn {
   -moz-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  background-color: #fff;
+  background-color: #ffffff;
+  border-color: #e7eaec;
   margin-bottom: 30px; }
   .panel .panel-heading,
   .panel .panel-body,

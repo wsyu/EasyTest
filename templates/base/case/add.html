@@ -1,181 +1,198 @@
 {% extends "../../base.html" %}
 
-{% block body %}
+{% block crumbs %}
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/yqjr/index">主页</a>
+            </li>
+            <li class="active">
+                <a class="this">基础信息</a>
+            </li>
+            <li class="active">
+                <a class="this-page">用例管理</a>
+            </li>
+            <li class="active">
+                <a class="">用例添加</a>
+            </li>
+        </ol>
 
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">
-            <span class="layui-breadcrumb">
-                <a href="">首页</a>
-                <a class="this" href="">基础信息</a>
-                <a class="this-page" href="">用例管理</a>
-                <a><cite>添加用例</cite></a>
-            </span>
-        </div>
-        <div class="layui-row">
-            <div class="layui-col-md8 layui-col-md-offset1">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>添加用例</legend>
-                </fieldset>
-                <div class="layui-form">
-                    <!--
-                    <form class="layui-form" action="/base/interface_add/" method="post">
-                    -->
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用例名称</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="case_name" lay-verify="title" autocomplete="off"
-                                   placeholder="请输入名称"
-                                   class="layui-input">
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加用例</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用例名称</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="case_name" class="form-control">
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">所属项目</label>
-                        <div class="layui-input-block">
-                            <select id="prj_id" name="prj_id" lay-filter="get_api">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属项目</label>
+                        <div class="col-sm-8">
+                            <select id="prj_id" class="form-control" onchange=get_api()>
                                 {% for prj in prj_list %}
-                                    <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
+                                <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">接口描述</label>
-                        <div class="layui-input-block">
-                            <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用例描述</label>
+                        <div class="col-sm-8">
+                            <textarea id="description" placeholder="请输入内容" class="form-control" rows="3"></textarea>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <from class='layui-form'>
-                                <div class='layui-form'>
-                                    <div class='layui-inline'>
-                                        <select id="if_id">
-                                            <option value="">请选择接口</option>
-                                        </select>
-                                    </div>
-                                    <div class='layui-inline'>
-                                        <button id="add_interface" onclick="add_interface(this)" class='layui-btn'>确定
-                                        </button>
-                                    </div>
-                                </div>
-                            </from>
-                            <br>
-                            <div id="case_content">
-                            </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">添加步骤</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" id="api_id" name="api_id">
+                                <option value="">请选择接口</option>
+                            </select>
                         </div>
-                        <br>
-                    </div>
-
-
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" id="sumbit">立即提交</button>
+                        <div class="col-sm-4 ">
+                            <button id="add_interface" class="btn btn-primary" type="button" data-toggle="modal">
+                                &nbsp;确定
+                            </button>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                    </form>
                 </div>
+
             </div>
 
         </div>
 
     </div>
-
 {% endblock %}
-{% block script %}
-
-    <script>
-    layui.use(['element', 'layer'], function () {
-        var element = layui.element;
-        var layer = layui.layer;
-
-        //监听折叠
-        element.on('collapse(test)', function (data) {
-            layer.msg('展开状态：' + data.show);
-        });
-    });
-
-    layui.use('form', function () {
-            var form = layui.form;
-            //获取接口列表
-            form.on('select(get_api)', function () {
-                $("#if_id").empty();
-                var prj_id = $("#prj_id").val();
-                if (prj_id == null) {
-                    alert("请先选择项目");
-                }
-                else {
-                    $.ajax({
-                        type: "get",
-                        url: "/base/findata/",
-                        data: {
-                            "prj_id": prj_id,
-                            "type": "get_all_if_by_prj_id"
-                        },
-                        success: function (data) {
-                            var jsondata = eval(data);
-                            $.each(jsondata, function (i, item) {
-                                $("#if_id").append("<option value=" + item.if_id + ">" + item.if_name + "</option>");
-                                form.render();
-                            });
-                        },
-                        error: function () {
-                            alert("获取接口失败！");
-                        }
-                    });
+{% block javascript %}
+<script>
+    function get_api() {
+        $("#api_id").empty();
+        var prj_id = $("#prj_id").val();
+        if (prj_id == null) {
+            alert("请先选择项目");
+        }
+        else {
+            $.ajax({
+                type: "get",
+                url: "/base/findata/",
+                data: {
+                    "prj_id": prj_id,
+                    "type": "get_all_if_by_prj_id"
+                },
+                success: function (data) {
+                    dataJson = eval(data);
+                    $.each(dataJson, function (i, item) {
+                        $("#api_id").append("<option value=" + item.if_id + ">" + item.if_name + "</option>");
+                    })
+                },
+                error: function () {
+                    alert("获取接口失败！");
                 }
             });
-
-        });
+        }
+    }
 </script>
+<script>
+    $(document).ready(function () {
+        //添加接口
+        $("#add_interface").click(function () {
+            var api_id = $("#api_id").val();
+            if (api_id == "") {
+                alert("请先选择接口");
+            }
+            else {
+                $.ajax({
+                    url: "/base/findata/",
+                    type: "get",
+                    data: {
+                        "api_id": api_id,
+                        "type": "get_api_by_api_id",
+                    },
+                    success: function (data) {
+                        jsondata = jQuery.parseJSON(data);
+                        var header_json = jsondata.request_header_param;
+                        var header_table = "<table name='header' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
+                            "<th>值</th>" +
+                            "<th></th> </tr> </thead><tbody>";
+                        $.each(JSON.parse(header_json), function (i, item) {
+                            var tr = "<tr><td>#</td><td name='var'>" + item.name + "</td><td contenteditable='true' name='value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
+                            header_table = header_table + tr;
+                        });
+                        var header = header_table + "</tbody></table>";
+                        var body_json = jsondata.request_body_param;
+                        var body_table = "<table name='body' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
+                            "<th>值</th>" +
+                            "<th></th> </tr> </thead><tbody>";
+                        $.each(JSON.parse(body_json), function (i, item) {
+                            var tr = "<tr><td>#</td><td name='var'>" + item.name + "</td><td contenteditable='true' name='value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
+                            body_table = body_table + tr
+                        });
+                        var body = body_table + "</tbody></table>";
+                        var newtable = "<div class='col-sm-offset-1 col-sm-8'> <div class='panel panel-default'>" +
+                            "<div id= '" + jsondata.api_id + "' class='panel-heading'>" + jsondata.api_name + "</div> <div class='panel-body'>" +
+                            "<input type='hidden' name='api_url' value='" + jsondata.api_url + "' class='btn btn-primary'>" +
+                            "<button onclick='add_header_row(this)' class='btn btn-primary'>添加header参数</button>" +
+                            "<button onclick='add_body_row(this)' class='btn btn-primary'>添加body参数</button> " +
+                            "<button onclick='add_extract_row(this)' class='btn btn-primary'>添加提取参数</button> " +
+                            "<button onclick='add_validators_row(this)' class='btn btn-primary'>添加检查点</button> " +
+                            "<button onclick='del_interface(this)' class='btn btn-primary'>删除本接口</button></div> " +
+                            "<p>header参数</p>" +
+                            header +
+                            "<p>body参数</p> " +
+                            body +
+                            "<p>提取参数</p> " +
+                            "<table name='extract' class='table'>" +
+                            "<thead>" +
+                            "<tr> <th>#</th>" +
+                            "<th>参数名</th>" +
+                            "</tr> " +
+                            "</thead>" +
+                            "<tbody> " +
+                            "</tbody> " +
+                            "</table> " +
+                            "<p>检查点</p> " +
+                            "<table name='validators' class='table'>" +
+                            "<thead>" +
+                            "<tr>" +
+                            "<th>#</th>" +
+                            "<th>参数名</th>" +
+                            "<th>期望值</th>" +
+                            "</tr>" +
+                            "</thead>" +
+                            "<tbody>" +
+                            "</tbody>" +
+                            "</table>" +
+                            "</div> </div>"
 
-    <script>
 
-
-        $(document).ready(function () {
-            //添加请求头参数行
-            $("#add_interface").click(function () {
-                var if_id = $("#if_id").val();
-                if (if_id == "") {
-                    alert("请先选择接口");
+                        $("#sub").before(newtable);
+                    },
+                    error: function () {
+                        alert("error!");
+                    }
+                        });
+                    }
                 }
-                else {
-                    $.ajax({
-                        url: "/base/findata/",
-                        type: "get",
-                        data: {
-                            "if_id": if_id,
-                            "type": "get_if_by_if_id",
-                        },
-                        // dataType: "json",
-                        success: function (data) {
-                            var jsondata = eval(data);
-                            $.each(jsondata, function (i, item) {
+            )
 
-                                var newinterface = "<div name='interface' class='layui-collapse' lay-accordion=''> " +
-                                    "<div class='layui-colla-item' id='" + item.if_id + "'> <h2 class='layui-colla-title'>" + item.if_name + "</h2> " +
-                                    "<div class='layui-colla-content layui-show'> <div class='layui-btn-group demoTable'> " +
-                                    "<button class='layui-btn' onclick='add_header_row(this)' data-type='getCheckData'>添加header参数 </button> " +
-                                    "<button class='layui-btn' onclick='add_body_row(this)' data-type='getCheckData'>添加body参数 </button> " +
-                                    "<button class='layui-btn' onclick='del_interface(this)'>删除接口</button> <br> </div> " +
-                                    "<div class='layui-colla-content layui-show'> <div class='layui-collapse' lay-accordion=''> " +
-                                    "<div class='layui-colla-item header'> <h2 class='layui-colla-title'>header</h2> " +
-                                    "<div class='layui-colla-content layui-show'> <table name='header' class='layui-table'> <thead> <tr> " +
-                                    "<th>参数</th> <th>值</th> <th></th> </tr> </thead> <tbody> </tbody> </table> </div> </div> " +
-                                    "<div class='layui-colla-item'> <h2 class='layui-colla-title'>body</h2> " +
-                                    "<div class='layui-colla-content layui-show'> <table name='body' class='layui-table'> <thead> <tr> " +
-                                    "<th>参数</th> <th>值</th> <th></th> </tr> </thead> <tbody> </tbody> </table> </div> </div> </div> </div> " +
-                                    "</div> </div><br></div>";
-                                $("#case_content").append(newinterface);
-                            });
-                        },
-                        error: function () {
-                            alert("error!");
-                        }
-                    });
-                }
-            });
-
-            //删除行
         });
+
     </script>
-{% endblock %}
+    {% endblock %}
