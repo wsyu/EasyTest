@@ -41,7 +41,150 @@
                         <label class="col-sm-2 control-label">所属项目</label>
                         <div class="col-sm-8">
                             <select type="text" id="prj_id" class="form-control">
+                                {% for prj in prj_list %}
+                                <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
+                                {% endfor %}
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">URL</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="url" name="url" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">请求方式</label>
+                        <div class="col-sm-1 control-label">
+                            <label class="fancy-radio">
+                                <input name="method" value="get" type="radio"><span><i></i>get</span>
+                            </label>
+                        </div>
+                        <div class="col-sm-1 control-label">
+                            <label class="fancy-radio">
+                                <input name="method" value="post" type="radio"><span><i></i>post</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">数据传输方式</label>
+                        <div class="col-sm-8">
+                            <select type="text" id="data_type" class="form-control">
+                                <option value='json'>json</option>
+                                <option value='data'>data</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">是否签名</label>
+                        <div class="col-sm-1 control-label">
+                            <label class="fancy-radio">
+                                <input name="is_sign" value="1" type="radio"><span><i></i>签名</span>
+                            </label>
+                        </div>
+                        <div class="col-sm-2 control-label">
+                            <label class="fancy-radio">
+                                <input name="is_sign" value="0" type="radio"><span><i></i>不签名</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">接口描述</label>
+                        <div class="col-sm-8">
+                            <textarea name="description" placeholder="请输入内容" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">请求header</label>
+                        <div class="col-sm-8">
+                            <button id="add_request_header" class="btn btn-primary" type="button"><i
+                                    class="fa fa-plus-square-o"></i>&nbsp;添加行
+                            </button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <table id="request_header" class="table col-sm-10" id="request_header_table">
+                                <thead>
+                                <tr>
+                                    <th>头部标签</th>
+                                    <th>备注</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">请求body</label>
+                        <div class="col-sm-8">
+                            <button id="add_request_body" class="btn btn-primary" type="button"><i
+                                    class="fa fa-plus-square-o"></i>&nbsp;添加行
+                            </button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <table id="request_body" class="table col-sm-10">
+                                <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>备注</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">返回header</label>
+                        <div class="col-sm-8">
+                            <button id="add_response_header" class="btn btn-outline btn-primary" type="button"><i
+                                    class="fa fa-plus-square-o"></i>&nbsp;添加行
+                            </button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <table id="response_header" class="table col-sm-10">
+                                <thead>
+                                <tr>
+                                    <th>头部标签</th>
+                                    <th>备注</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">返回body</label>
+                        <div class="col-sm-8">
+                            <button id="add_response_body" class="btn btn-outline btn-primary" type="button"><i
+                                    class="fa fa-plus-square-o"></i>&nbsp;添加行
+                            </button>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <table id="response_body" class="table col-sm-10">
+                                <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>备注</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-6">
+                            <button id="sumbit" class="btn btn-primary">保存</button>
                         </div>
                     </div>
                 </div>
@@ -50,161 +193,8 @@
     </div>
 </div>
 
-
-<div class="layui-body">
-    <div class="layui-row">
-        <div class="layui-col-md8 layui-col-md-offset1">
-            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                <legend>添加接口</legend>
-            </fieldset>
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">接口名称</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="if_name" lay-verify="title" autocomplete="off" placeholder="请输入名称"
-                               class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">所属项目</label>
-                    <div class="layui-input-block">
-                        <select name="prj_id" lay-filter="aihao">
-                            <option value=""></option>
-                            {% for prj in prj_list %}
-                            <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">URL</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="url" placeholder="请输入内容" class="layui-input">
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">请求方式</label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="method" value="post" title="post" checked>
-                        <input type="radio" name="method" value="get" title="get">
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">数据传输</label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="data_type" value="json" title="json" checked>
-                        <input type="radio" name="data_type" value="data" title="data">
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">是否加密</label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="is_sign" value="1" title="加密" checked>
-                        <input type="radio" name="is_sign" value="0" title="不加密">
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">接口描述</label>
-                    <div class="layui-input-block">
-                        <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
-                    </div>
-                </div>
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>请求头信息header</legend>
-                </fieldset>
-                <div>
-                    <button id="add_request_header" class="layui-btn">添加行</button>
-                </div>
-
-                <table id="request_header" class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>参数名</th>
-                        <th>含义</th>
-                        <th>备注</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>请求信息body</legend>
-                </fieldset>
-                <div>
-                    <button id="add_request_body" class="layui-btn">添加行</button>
-                </div>
-
-                <table id="request_body" class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>参数名</th>
-                        <th>含义</th>
-                        <th>备注</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>返回头信息header</legend>
-                </fieldset>
-                <div>
-                    <button id="add_response_header" class="layui-btn">添加行</button>
-                </div>
-
-                <table id="response_header" class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>参数名</th>
-                        <th>含义</th>
-                        <th>备注</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>返回信息body</legend>
-                </fieldset>
-                <div>
-                    <button id="add_response_body" class="layui-btn">添加行</button>
-                </div>
-
-                <table id="response_body" class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>参数名</th>
-                        <th>含义</th>
-                        <th>备注</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-
-
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" id="sumbit">立即提交</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
 {% endblock %}
-{% block script %}
+{% block javascript %}
 <script>
 
     function del_step(obj) {
@@ -216,22 +206,22 @@
     $(document).ready(function () {
         //添加请求头参数行
         $("#add_request_header").click(function () {
-            var newRow = "<tr> <td name='var_name' contenteditable='true'></td> <td name='var_meaning' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='layui-btn layui-btn-xs layui-bg-red' onclick='del_step(this)'>删除行</button> </td> </tr>";
+            var newRow = "<tr> <td name='var_name' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='btn btn-danger' onclick='del_step(this)'>删除行</button> </td> </tr>";
             $("#request_header tr:last").after(newRow);
         });
 
         $("#add_request_body").click(function () {
-            var newRow = "<tr> <td name='var_name' contenteditable='true'></td> <td name='var_meaning' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='layui-btn layui-btn-xs layui-bg-red' onclick='del_step(this)'>删除行</button> </td> </tr>";
+            var newRow = "<tr> <td name='var_name' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='btn btn-danger' onclick='del_step(this)'>删除行</button> </td> </tr>";
             $("#request_body tr:last").after(newRow);
         });
 
         $("#add_response_header").click(function () {
-            var newRow = "<tr> <td name='var_name' contenteditable='true'></td> <td name='var_meaning' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='layui-btn layui-btn-xs layui-bg-red' onclick='del_step(this)'>删除行</button> </td> </tr>";
+            var newRow = "<tr> <td name='var_name' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='btn btn-danger' onclick='del_step(this)'>删除行</button> </td> </tr>";
             $("#response_header tr:last").after(newRow);
         });
 
         $("#add_response_body").click(function () {
-            var newRow = "<tr> <td name='var_name' contenteditable='true'></td> <td name='var_meaning' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='layui-btn layui-btn-xs layui-bg-red' onclick='del_step(this)'>删除行</button> </td> </tr>";
+            var newRow = "<tr> <td name='var_name' contenteditable='true'></td><td name='var_remark' contenteditable='true'></td> <td> <button class='btn btn-danger' onclick='del_step(this)'>删除行</button> </td> </tr>";
             $("#response_body tr:last").after(newRow);
         });
 
@@ -257,11 +247,11 @@
 
     $('#sumbit').click(function () {
 
-        var if_name = $("input[name='if_name']").val();
-        var prj_id = $("select[name='prj_id']").val();
-        var url = $("input[name='url']").val();
+        var if_name = $("#if_name").val();
+        var prj_id = $("#prj_id").val();
+        var url = $("#url").val();
         var method = $("input[name='method']:checked").val();
-        var data_type = $("input[name='data_type']:checked").val();
+        var data_type = $("#data_type").val();
         var is_sign = $("input[name='is_sign']:checked").val();
         var description = $("textarea[name='description']").val();
 
@@ -271,7 +261,7 @@
         var response_body_data;
 
         var args = [];
-        $('#request_header tr').each(function (i) {                   // 遍历 tr
+        $('#request_header tr').each(function (i) {
             if (i == 0) return true;
             var data = new Object();
             $(this).find("td[name]").each(function () {
@@ -283,7 +273,7 @@
         request_header_data = JSON.stringify(args);
 
         var args = [];
-        $('#request_header tr').each(function (i) {                   // 遍历 tr
+        $('#request_body tr').each(function (i) {
             if (i == 0) return true;
             var data = new Object();
             $(this).find("td[name]").each(function () {

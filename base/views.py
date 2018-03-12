@@ -50,12 +50,11 @@ def project_update(request):
     return render(request, "base/project/update.html", {"prj": prj, "sign_list": sign_list})
 
 def project_delete(request):
-    if request.method == 'POST':
-        prj_name = request.POST['project_name']
-        prj = Project.objects.create(name=prj_name)
-        prj.save()
-        return render(request, "base/project/index.html")
-    return render(request, "base/project/add.html")
+    if request.method == 'GET':
+        prj_id = request.GET['prj_id']
+        Project.objects.filter(prj_id=prj_id).delete()
+        return HttpResponseRedirect("base/project/")
+
 
 
 # 加密方式增删改查
@@ -71,6 +70,7 @@ def sign_add(request):
         sign.save()
         return HttpResponseRedirect("/base/sign/")
     return render(request, "system/sign_add.html")
+
 # 更新加密方式
 def sign_update(request):
     if request.method == 'POST':
@@ -127,7 +127,7 @@ def interface_index(request):
 
 def interface_add(request):
     if request.method == 'POST':
-        if_name= request.POST['if_name']
+        if_name = request.POST['if_name']
         prj_id = request.POST['prj_id']
         project = Project.objects.get(prj_id=prj_id)
         url = request.POST['url']
