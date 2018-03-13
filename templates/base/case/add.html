@@ -65,6 +65,7 @@
                         </div>
                     </div>
                     <div id="case-list">
+                        <!--
                         <div class="row">
                             <div class="col-sm-offset-1 col-sm-9">
                                 <div class="panel">
@@ -76,16 +77,27 @@
                                             <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i>
                                             </button>
                                         </div>
+
                                     </div>
                                     <div class="panel-body">
+                                        <button onclick='add_header_row(this)' class='btn btn-primary'>添加header参数
+                                        </button>
+                                        <button onclick='add_body_row(this)' class='btn btn-primary'>添加body参数</button>
+                                        <button onclick='add_extract_row(this)' class='btn btn-primary'>添加提取参数</button>
+                                        <button onclick='add_validators_row(this)' class='btn btn-primary'>添加检查点
+                                        </button>
+                                        <button onclick='del_interface(this)' class='btn btn-primary'>删除本接口</button>
                                         <p>header</p>
-                                        <table class="table">
+                                        <table name='header' class="table">
                                             <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th>参数名</th>
                                                 <th>值</th>
                                             </tr>
+                                            <tbody>
+
+                                            </tbody>
                                             </thead>
                                         </table>
                                     </div>
@@ -93,12 +105,12 @@
                             </div>
 
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-6">
-                                <button type="submit" class="btn btn-primary">保存</button>
-                            </div>
+                        -->
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-primary">保存</button>
                         </div>
-                        </form>
                     </div>
 
                 </div>
@@ -110,6 +122,75 @@
     {% endblock %}
     {% block javascript %}
     <script>
+
+        //删除本接口
+        function del_interface(obj) {
+            var div = $(obj).parent("div").parent().parent();
+            $(div).remove();
+        }
+
+        //删除行
+        function del_step(obj) {
+            var tr = obj.parentNode.parentNode;
+            var tbody = tr.parentNode;
+            tbody.removeChild(tr);
+        }
+
+
+        //添加头参数
+        function add_header_row(obj) {
+            var panel = $(obj).parent().parent();
+            var tbody = $(panel).find("table[name='header']").children('tbody');
+            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            $(tbody).append(newRow);
+        }
+
+        //添加body参数
+        function add_body_row(obj) {
+            var panel = $(obj).parent().parent();
+            var tbody = $(panel).find("table[name='body']").children('tbody');
+            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            $(tbody).append(newRow);
+        }
+
+        function add_extract_row(obj) {
+            var api = $(obj).parent().parent().find("div[class='panel-heading']");
+            var api_id = $(api).attr("id");
+            //alert(api_id);
+            $.ajax({
+                type: "get",
+                url: "/basic/find",
+                data: {
+                    "api_id": api_id,
+                    "type": "get_response_by_api_id"
+                },
+                success: function (data) {
+                    dataJson = eval("(" + data + ")");
+                    $.each(dataJson, function (i, item) {
+                        $("#api_id").append("<option value=" + item.id + ">" + item.api_name + "</option>");
+                    })
+                },
+                error: function () {
+                    alert("获取接口失败！");
+                }
+            });
+
+            var panel = $(obj).parent().parent();
+            var tbody = $(panel).find("table[name='extract']").children('tbody');
+            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            $(tbody).append(newRow);
+        }
+
+
+        //添加检查点参数
+        function add_validators_row(obj) {
+            var panel = $(obj).parent().parent();
+            var tbody = $(panel).find("table[name='validators']").children('tbody');
+            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            $(tbody).append(newRow);
+        }
+
+
         function get_if() {
             $("#if_id").empty();
             var prj_id = $("#prj_id").val();
@@ -154,63 +235,73 @@
                                 "type": "get_if_by_if_id",
                             },
                             success: function (data) {
-                                jsondata = jQuery.parseJSON(data);
-                                var header_json = jsondata.request_header_param;
-                                var header_table = "<table name='header' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
-                                    "<th>值</th>" +
-                                    "<th></th> </tr> </thead><tbody>";
-                                $.each(JSON.parse(header_json), function (i, item) {
-                                    var tr = "<tr><td>#</td><td name='var'>" + item.name + "</td><td contenteditable='true' name='value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
-                                    header_table = header_table + tr;
-                                });
-                                var header = header_table + "</tbody></table>";
-                                var body_json = jsondata.request_body_param;
-                                var body_table = "<table name='body' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
-                                    "<th>值</th>" +
-                                    "<th></th> </tr> </thead><tbody>";
-                                $.each(JSON.parse(body_json), function (i, item) {
-                                    var tr = "<tr><td>#</td><td name='var'>" + item.name + "</td><td contenteditable='true' name='value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
-                                    body_table = body_table + tr
-                                });
-                                var body = body_table + "</tbody></table>";
-                                var newtable = "<div class='col-sm-offset-1 col-sm-8'> <div class='panel panel-default'>" +
-                                    "<div id= '" + jsondata.api_id + "' class='panel-heading'>" + jsondata.api_name + "</div> <div class='panel-body'>" +
-                                    "<input type='hidden' name='api_url' value='" + jsondata.api_url + "' class='btn btn-primary'>" +
-                                    "<button onclick='add_header_row(this)' class='btn btn-primary'>添加header参数</button>" +
-                                    "<button onclick='add_body_row(this)' class='btn btn-primary'>添加body参数</button> " +
-                                    "<button onclick='add_extract_row(this)' class='btn btn-primary'>添加提取参数</button> " +
-                                    "<button onclick='add_validators_row(this)' class='btn btn-primary'>添加检查点</button> " +
-                                    "<button onclick='del_interface(this)' class='btn btn-primary'>删除本接口</button></div> " +
-                                    "<p>header参数</p>" +
-                                    header +
-                                    "<p>body参数</p> " +
-                                    body +
-                                    "<p>提取参数</p> " +
-                                    "<table name='extract' class='table'>" +
-                                    "<thead>" +
-                                    "<tr> <th>#</th>" +
-                                    "<th>参数名</th>" +
-                                    "</tr> " +
-                                    "</thead>" +
-                                    "<tbody> " +
-                                    "</tbody> " +
-                                    "</table> " +
-                                    "<p>检查点</p> " +
-                                    "<table name='validators' class='table'>" +
-                                    "<thead>" +
-                                    "<tr>" +
-                                    "<th>#</th>" +
-                                    "<th>参数名</th>" +
-                                    "<th>期望值</th>" +
-                                    "</tr>" +
-                                    "</thead>" +
-                                    "<tbody>" +
-                                    "</tbody>" +
-                                    "</table>" +
-                                    "</div> </div>"
+                                var listdata = eval(data);
+                                $(listdata).each(function (i, item) {
+
+                                    var header_json = item.request_header_param;
+                                    var header_table = "<table name='header' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
+                                        "<th>值</th>" +
+                                        "<th></th> </tr> </thead><tbody>";
+                                    $.each(JSON.parse(header_json), function (i, item) {
+                                        var tr = "<tr><td>#</td><td name='var_name'>" + item.var_name + "</td><td contenteditable='true' name='var_value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
+                                        header_table = header_table + tr;
+                                    });
+                                    var header = header_table + "</tbody></table>";
+
+                                    var body_json = item.request_body_param;
+                                    var body_table = "<table name='body' class='table'><thead><tr><th>#</th> <th>参数名</th>" +
+                                        "<th>值</th>" +
+                                        "<th></th> </tr> </thead><tbody>";
+                                    $.each(JSON.parse(body_json), function (i, item) {
+                                        var tr = "<tr><td>#</td><td name='var_name'>" + item.var_name + "</td><td contenteditable='true' name='var_value'></td><td><button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this);'>&nbsp;删除行 </button> </td></tr>";
+                                        body_table = body_table + tr
+                                    });
+                                    var body = body_table + "</tbody></table>";
 
 
-                                $("#sub").before(newtable);
+                                    var newtable = "<div class='row'><div class='col-sm-offset-1 col-sm-9'> <div class='panel'>" +
+                                        "<div id= '" + item.if_id + "' class='panel-heading'>" +
+                                        "<h3 class='panel-title'>" + item.if_name + "</h3>" +
+                                        "<div class='right'><button type=\"button\" class=\"btn-toggle-collapse\"><i class=\"lnr lnr-chevron-up\"></i></button></div>" +
+                                        "</div>" +
+                                        "<div class='panel-body'>" +
+                                        "<input type='hidden' name='url' value='" + item.url + "' class='btn btn-primary'>" +
+                                        "<button onclick='add_header_row(this)' class='btn btn-primary'>添加header参数</button>" +
+                                        "<button onclick='add_body_row(this)' class='btn btn-primary'>添加body参数</button> " +
+                                        "<button onclick='add_extract_row(this)' class='btn btn-primary'>添加提取参数</button> " +
+                                        "<button onclick='add_validators_row(this)' class='btn btn-primary'>添加检查点</button> " +
+                                        "<button onclick='del_interface(this)' class='btn btn-primary'>删除本接口</button></div> " +
+                                        "<p>header参数</p>" +
+                                        header +
+                                        "<p>body参数</p>" +
+                                        body +
+                                        "<p>提取参数</p> " +
+                                        "<table name='extract' class='table'>" +
+                                        "<thead>" +
+                                        "<tr> <th>#</th>" +
+                                        "<th>参数名</th>" +
+                                        "</tr> " +
+                                        "</thead>" +
+                                        "<tbody> " +
+                                        "</tbody> " +
+                                        "</table> " +
+                                        "<p>检查点</p> " +
+                                        "<table name='validators' class='table'>" +
+                                        "<thead>" +
+                                        "<tr>" +
+                                        "<th>#</th>" +
+                                        "<th>参数名</th>" +
+                                        "<th>期望值</th>" +
+                                        "</tr>" +
+                                        "</thead>" +
+                                        "<tbody>" +
+                                        "</tbody>" +
+                                        "</table>" +
+                                        "</div> </div></div>"
+                                    $("#case-list").append(newtable);
+
+                                });
+
                             },
                             error: function () {
                                 alert("error!");
