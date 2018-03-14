@@ -1,64 +1,73 @@
 {% extends "../../base.html" %}
 
-{% block body %}
+{% block crumbs %}
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/yqjr/index">主页</a>
+            </li>
+            <li class="active">
+                <a class="this">基础信息</a>
+            </li>
+            <li class="active">
+                <a class="this-page" href="/base/env/">测试环境管理</a>
+            </li>
+            <li class="active">
+                <a class="">添加环境</a>
+            </li>
+        </ol>
 
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">
-            <span class="layui-breadcrumb">
-                <a href="">首页</a>
-                <a class="this" href="">基础信息</a>
-                <a class="this-page" href="">测试环境</a>
-                <a><cite>添加测试环境</cite></a>
-            </span>
-        </div>
-        <div class="layui-row">
-            <div class="layui-col-md8 layui-col-md-offset1">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>添加测试环境</legend>
-                </fieldset>
-                <form class="layui-form" action="/base/env_add/" method="post">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">测试环境名称</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="env_name" lay-verify="title" autocomplete="off" placeholder="请输入名称"
-                                   class="layui-input">
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加测试环境</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="/base/env_add/">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">环境名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="env_name" class="form-control">
                         </div>
                     </div>
-
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">所属项目</label>
-                        <div class="layui-input-block">
-                            <select name="prj_id" lay-filter="aihao">
-                                <option value=""></option>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">URL</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="url" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密钥</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="private_key" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属项目</label>
+                        <div class="col-sm-6">
+                            <select name="prj_id" class="form-control">
                                 {% for prj in prj_list %}
                                     <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">URL</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="url" placeholder="请输入内容" class="layui-input">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">环境描述</label>
+                        <div class="col-sm-6">
+                            <textarea name="description" placeholder="请输入内容" class="form-control" rows="3"></textarea>
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">密钥</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="private_key" placeholder="请输入内容" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">测试环境描述</label>
-                        <div class="layui-input-block">
-                            <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
-                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-primary">保存</button>
                         </div>
                     </div>
                 </form>
@@ -67,5 +76,7 @@
         </div>
 
     </div>
+
+</div>
 
 {% endblock %}
