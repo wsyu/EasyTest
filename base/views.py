@@ -155,24 +155,14 @@ def case_index(request):
 
 def case_add(request):
     if request.method == 'POST':
-        if_name = request.POST['if_name']
+        case_name = request.POST['case_name']
         prj_id = request.POST['prj_id']
         project = Project.objects.get(prj_id=prj_id)
-        url = request.POST['url']
-        method = request.POST['method']
-        data_type = request.POST['data_type']
-        is_sign = request.POST['is_sign']
         description = request.POST['description']
-        request_header_data = request.POST['request_header_data']
-        request_body_data = request.POST['request_body_data']
-        response_header_data = request.POST['response_header_data']
-        response_body_data = request.POST['response_body_data']
-        interface = Interface(if_name=if_name, url=url, project=project, method=method, data_type=data_type,
-                          is_sign=is_sign, description=description, request_header_param=request_header_data,
-                          request_body_param=request_body_data, response_header_param=response_header_data,
-                          response_body_param=response_body_data)
-        interface.save()
-        return HttpResponseRedirect("/base/interface/")
+        content = request.POST['content']
+        case = Case(case_name=case_name, project=project, description=description, content=content)
+        case.save()
+        return HttpResponseRedirect("/base/case/")
     prj_list = Project.objects.all()
     return render(request, "base/case/add.html", {"prj_list": prj_list})
 
@@ -192,3 +182,8 @@ def findata(request):
             # 查询并将结果转换为json
             interface = Interface.objects.filter(if_id=if_id).values()
             return JsonResponse(list(interface), safe=False)
+        if get_type == "get_env_by_prj_id":
+            prj_id = request.GET["prj_id"]
+            # 查询并将结果转换为json
+            env = Environment.objects.filter(project_id=prj_id).values()
+            return JsonResponse(list(env), safe=False)

@@ -43,20 +43,122 @@
                     <tr>
                         <td>{{ case.case_id }}</td>
                         <td>{{ case.case_name }}</td>
-                        <td>{{ case.project }}</td>
+                        <td prj_id="{{ case.project.prj_id }}">{{ case.project }}</td>
                         <td>{{ case.description }}</td>
                         <td>
-                            <a href="" class="" >编辑</a>
-                            <a href="" class="" >删除</a>
+                            <button class="#runCaseForm" onclick="debug_button(this);" data-toggle="modal" data-target="#runCaseForm">运行</button>
+                            <a href="" class="">编辑</a>
+                            <a href="" class="">删除</a>
                         </td>
                     </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+                <div class="modal fade" id="runCaseForm" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">×</span></button>
+                            <h4 class="modal-title">用例运行</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" method="post" action="/api/routine/edit">
+                                <div class="form-group">
+                                    <input type="hidden" id="debug_case_id" name="case_id">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">请选择测试环境</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control m-b" id="debug_env_id" name="env_id">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label"> 实际返回结果</label>
+                                    <div class="col-sm-8"><textarea class="form-control" id="run_return_parameter"
+                                                                    name="run_return_parameter"
+                                                                    rows="5"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" id="cancel_run" class="btn btn-default" data-dismiss="modal">
+                                        取消
+                                    </button>
+                                    <button type="button" onclick="run_button()" class="btn btn-primary">调试
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
+
+
         </div>
     </div>
-</div>
 
 
-{% endblock %}
+    {% endblock %}
+
+    {% block javascript %}
+    <script>
+        function debug_button(obj) {
+
+            var case_id = obj.parentNode.parentNode.children[0].innerText;
+            var prj_id = obj.parentNode.parentNode.children[2].getAttribute("prj_id");
+            $("#debug_case_id").val(case_id);
+            $("#cancel_run").html("取消");
+            $("#cancel_run").attr("class", "btn btn-default");
+            $("#run_return_parameter").val('');
+
+            $.ajax({
+                type: "get",
+                url: "/base/findata/",
+                data:
+                    {
+                        "prj_id": prj_id,
+                        "type": "get_env_by_prj_id"
+                    },
+                success: function (data) {
+                    var listdata = eval(data);
+                    $(listdata).each(function (i, item) {
+                        $("#debug_env_id").empty();
+                        $("#debug_env_id").append("<option value=" + item.id + ">" + item.env_name + "</option>");
+                    })
+                },
+                error: function () {
+                    alert("获取测试环境失败！");
+                }
+            });
+        };
+
+        function run_button() {
+            $.ajax({
+                type: 'post',
+                url: "/basic/case/run",
+                data: {
+                    "case_id": $("#debug_case_id").val(),
+                    "env_id": $("#debug_env_id").val(),
+                },
+                success: function (res) {
+                    alert(res);
+                    $("#run_return_parameter").val(res);
+                    //var res_data = eval("(" + res + ")");
+                    //alert(res_data);
+                    //$("#run_return_parameter").val(res_data.url + "\n" + res_data.header + "\n" + res_data.sendata + "\n" + res_data.revcdata);
+                    $("#cancel_run").html("完成");
+                    $("#cancel_run").attr("class", "btn btn-primary");
+                },
+                error: function () {
+                    $("#run_return_parameter").val("调用接口失败!!!");
+                    $("#cancel_run").html("完成");
+                    $("#cancel_run").attr("class", "btn btn-danger");
+                }
+            });
+        };
+    </script>
+    {% endblock %}
