@@ -2,27 +2,48 @@
 # coding:utf-8
 __author__ = 'wsy'
 
-from modules import Sign, Project, Environment, APIDoc, Case, db_session
+
+from base.models import Project, Sign, Environment, Interface, Case
 import requests
 import hashlib
 import re
 import json
-from handlers.system.base import BaseHandler
-from lib.signtype import *
+from lib.signtype import get_sign
 
 class Execute():
     def __init__(self, case_id, env_id):
-        self.db_session = db_session
         self.case_id = case_id
         self.env_id = env_id
+        self.prj_id, self.env_url, self.private_key = self.get_env(self.env_id)
+        self.sign_type = self.get_sign(self.prj_id)
+
+
+        self.extract_list = []
+
+
+
         self.glo_var = {}
-        self.pro_id, self.env_url, self.private_key = self.get_env(self.env_id)
-        self.sign_type = self.get_sign(self.pro_id)
         self.step_json = []
 
     def run_case(self):
-        case = self.db_session.query(Case).filter(Case.id == self.case_id).first()
+        case = Case.objects.get(case_id=self.case_id)
         step_list = eval(case.content)
+        case_run = {"case_id": self.case_id, "case_name": case.case_name}
+        case_step_list = []
+        for step in step_list:
+            step_info = self.step(step)
+            case_step_list.append(step_info)
+            if step_info["result"] != "pass":
+                break
+        case_run["step_list"] = case_step_list
+        return case_run
+
+
+
+
+
+
+        """
         case_result = {"result": "pass"}
         case_result["case_id"] = self.case_id
         case_result["case_name"] = case.case_name
@@ -32,14 +53,17 @@ class Execute():
             step_result_list.append(step_result)
             if step_result["result"] == "fail":
                 case_result["result"] = "fail"
-        db_session.close()
         case_result["step_list"] = step_result_list
         return case_result
+        """
 
 
     def step(self, step_content):
-        step = {}
-        var_list = self.extract_variables(step_content)
+        if_id = step_content["if_id"]
+        interface = Interface.objects.get(if_id=if_id)
+        if_dict = {"url": step_content["url"], "header": step_content["header"], "body": step_content["body"]}
+        var_list = self.extract_variables(if_dict)
+        # 检查是否存在变量
         if var_list:
             for var_name in var_list:
                 var_value = self.get_param(var_name, step_content)
@@ -47,60 +71,59 @@ class Execute():
                     var_value = self.get_param(var_name, self.step_json)
                 step_content = json.loads(self.replace_var(step_content, var_name, var_value))
 
-        sendheader, sendate, res = self.call_interface(api_id=step_content["api_id"], url=step_content["api_url"],
-                                  header=step_content["header"],
-                                  data=step_content["body"])
+        # 签名
+        if interface.is_sign:
+            if_dict = get_sign(self.sign_type, if_dict, self.private_key)
+        if_dict["url"] = self.env_url + step_content["url"]
+        if_dict["if_id"] = if_id
+        if_dict["if_name"] = step_content["if_name"]
+        if_dict["method"] = interface.method
+        if_dict["data_type"] = interface.data_type
+
+        try:
+            if_dict["res_content"] = self.call_interface(if_dict["method"], if_dict["url"], if_dict["header"],
+                                                 if_dict["body"], if_dict["data_type"])
+            if_dict["res_status_code"] = if_dict["res_content"].status_code
+        except requests.RequestException as e:
+            if_dict["result"] = "Error"
+            if_dict["msg"] = e
+            return if_dict
 
         if step_content["extract"]:
-                step_content = self.get_extract(step_content, res)
-                self.step_json.append(step_content)
+                self.get_extract(step_content["extract"], if_dict["res_content"])
         if step_content["validators"]:
-                result, msg = self.validators_result(step_content, res.text)
+            if_dict["result"], if_dict["msg"] = self.validators_result(step_content["validators"], if_dict["res_content"])
         else:
-            result = "pass"
-            msg = {}
-        step["api_id"] = step_content["api_id"]
-        step["api_name"] = step_content["api_name"]
-        step["url"] = res.url
-        step["send_header"] = sendheader
-        step["send_data"] = sendate
-        step["res_status_code"] = res.status_code
-        step["res_content"] = res.text
-        step["result"] = result
-        step["msg"] = msg
-        return step
+            if_dict["result"] = "pass"
+            if_dict["msg"] = {}
+        return if_dict
+
+
 
     # 验证结果
-    def validators_result(self, content, res):
+    def validators_result(self, validators_list, res):
+        msg = ""
         result = ""
-        msg = []
-        if isinstance(content, str):
-            content = json.loads(content)
-        if content["validators"]:
-            validators_list = content["validators"]
-            for var_field in validators_list:
-                validator = {}
-                check_filed = var_field["check"]
-                expect_filed = var_field["expect"]
-                check_filed_value = self.get_param(check_filed, res)
-                validator["check_filed"] = check_filed
-                validator["check_filed_value"] = check_filed_value
-                validator["expect_filed"] = expect_filed
-                msg.append(validator)
-                if check_filed_value == expect_filed:
-                    result = "pass"
-                else:
-                    result = "fail"
-                    break
+        for var_field in validators_list:
+            check_filed = var_field["check"]
+            expect_filed = var_field["expect"]
+            check_filed_value = self.get_param(check_filed, res)
+            if check_filed_value == expect_filed:
+                result = "pass"
+                msg = ""
+            else:
+                result = "fail"
+                msg = "字段: " + check_filed + " 实际值为：" + check_filed_value + " 与期望值：" + expect_filed + " 不符"
+                break
         return result, msg
 
-    # 在response中提取参数, 并返回
-    def get_extract(self, step_content, res):
-        if step_content["extract"]:
-            for key, value in step_content["extract"].items():
-                key_value = self.get_param(key, res.text)
-                step_content["extract"][key] = key_value
-        return step_content
+    # 在response中提取参数, 并放到列表中
+    def get_extract(self, extract_dict, res):
+        for key, value in extract_dict["extract"].items():
+            key_value = self.get_param(key, res.text)
+            self.extract_list[key] = key_value
+
+
 
 
     # 替换内容中的变量, 返回字符串型
@@ -189,44 +212,28 @@ class Execute():
 
     # 获取测试环境
     def get_env(self, env_id):
-        env = self.db_session.query(Environment).filter(Environment.id == env_id).first()
-        pro_id =env.pro_id
-        env_url = env.url
-        private_key = env.private_key
-        return pro_id, env_url, private_key
+        env = Environment.objects.get(sign_id=env_id)
+        prj_id = env.project.prj_id
+        return prj_id, env.url, env.private_key
 
-    # 获取加密方式
-    def get_sign(self, pro_id):
+    # 获取签名方式
+    def get_sign(self, prj_id):
         """
-        sign_type: 加密方式
+        sign_type: 签名方式
         """
-        pro = self.db_session.query(Project).filter(Project.id == pro_id).first()
-        sign_type = pro.sign_id
+        prj = Project.objects.get(prj_id=prj_id)
+        sign_type = prj.sign
         return sign_type
 
 
     # 发送请求
-    def call_interface(self, api_id, url, data, header):
-
-
-        api = self.db_session.query(APIDoc).filter(APIDoc.id == api_id).first()
-        url = self.env_url + url
-        method = api.method
-        content_type = api.data_type
-        data = get_sendata(self.sign_type, data, self.private_key)
+    def call_interface(self, method, url, header, data, content_type='json'):
         if method == "post":
             if content_type == "json":
-                r = requests.post(url=url, json=data, headers=header, verify=False)
+                res = requests.post(url=url, json=data, headers=header, verify=False)
             if content_type == "data":
-                print(url,data,header)
-                r = requests.post(url=url, data=data, headers=header, verify=False)
+                res = requests.post(url=url, data=data, headers=header, verify=False)
         if method == "get":
-            r = requests.get(url=url, params=data, headers=header, verify=False)
-            """
-            if content_type == "json":
-                r = requests.get(url=url, json=data, headers=header, verify=False)
-            if content_type == "data":
-                r = requests.get(url=url, data=data, headers=header, verify=False)
-                """
-        return header, data, r
+            res = requests.get(url=url, params=data, headers=header, verify=False)
+        return res.text
 

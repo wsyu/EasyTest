@@ -63,7 +63,7 @@
                             <h4 class="modal-title">用例运行</h4>
                         </div>
                         <div class="modal-body">
-                            <form class="form-horizontal" method="post" action="/api/routine/edit">
+                            <div class="form-horizontal" method="post" action="">
                                 <div class="form-group">
                                     <input type="hidden" id="debug_case_id" name="case_id">
                                 </div>
@@ -90,7 +90,7 @@
                                     <button type="button" onclick="run_button()" class="btn btn-primary">调试
                                     </button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
         function run_button() {
             $.ajax({
                 type: 'post',
-                url: "/basic/case/run",
+                url: "/base/case_run/",
                 data: {
                     "case_id": $("#debug_case_id").val(),
                     "env_id": $("#debug_env_id").val(),

@@ -37,6 +37,7 @@ urlpatterns = [
 
     url(r'/case/', case_index),
     url(r'/case_add/', case_add),
+    url(r'/case_run/', case_run),
 
     url(r'/findata/', findata)
 ]

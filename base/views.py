@@ -3,6 +3,7 @@ from base.models import Project, Sign, Environment, Interface, Case
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.core import serializers
+from lib.execute import Execute
 
 # Create your views here.
 
@@ -165,6 +166,18 @@ def case_add(request):
         return HttpResponseRedirect("/base/case/")
     prj_list = Project.objects.all()
     return render(request, "base/case/add.html", {"prj_list": prj_list})
+
+def case_run(request):
+    if request.method == 'POST':
+        case_id = request.POST['case_id']
+        env_id = request.POST['env_id']
+        execute = Execute(case_id, env_id)
+        case_result = execute.run_case()
+        print(case_result)
+        return JsonResponse(case_result)
+
+
+
 
 def findata(request):
     if request.method == 'POST':

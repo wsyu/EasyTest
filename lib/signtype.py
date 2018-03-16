@@ -9,7 +9,7 @@
 """
 import hashlib
 
-def get_sendata(sign_type, data, private_key):
+def get_sign(sign_type, data, private_key):
     if sign_type == 1:
         return sign_1(data)
     if sign_type == 2:
