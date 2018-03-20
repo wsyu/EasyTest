@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.core import serializers
 from lib.execute import Execute
-
+import json
 # Create your views here.
 
 
@@ -173,7 +173,6 @@ def case_run(request):
         env_id = request.POST['env_id']
         execute = Execute(case_id, env_id)
         case_result = execute.run_case()
-        print(case_result)
         return JsonResponse(case_result)
 
 

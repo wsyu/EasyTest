@@ -20,8 +20,6 @@ class Execute():
 
         self.extract_list = []
 
-
-
         self.glo_var = {}
         self.step_json = []
 
@@ -61,7 +59,7 @@ class Execute():
     def step(self, step_content):
         if_id = step_content["if_id"]
         interface = Interface.objects.get(if_id=if_id)
-        if_dict = {"url": step_content["url"], "header": step_content["header"], "body": step_content["body"]}
+        if_dict = {"url": interface.url, "header": step_content["header"], "body": step_content["body"]}
         var_list = self.extract_variables(if_dict)
         # 检查是否存在变量
         if var_list:
@@ -74,16 +72,17 @@ class Execute():
         # 签名
         if interface.is_sign:
             if_dict = get_sign(self.sign_type, if_dict, self.private_key)
-        if_dict["url"] = self.env_url + step_content["url"]
+        if_dict["url"] = self.env_url + interface.url
         if_dict["if_id"] = if_id
         if_dict["if_name"] = step_content["if_name"]
         if_dict["method"] = interface.method
         if_dict["data_type"] = interface.data_type
 
         try:
-            if_dict["res_content"] = self.call_interface(if_dict["method"], if_dict["url"], if_dict["header"],
+            res = self.call_interface(if_dict["method"], if_dict["url"], if_dict["header"],
                                                  if_dict["body"], if_dict["data_type"])
-            if_dict["res_status_code"] = if_dict["res_content"].status_code
+            if_dict["res_status_code"] = res.status_code
+            if_dict["res_content"] = res.text
         except requests.RequestException as e:
             if_dict["result"] = "Error"
             if_dict["msg"] = e
@@ -113,7 +112,7 @@ class Execute():
                 msg = ""
             else:
                 result = "fail"
-                msg = "字段: " + check_filed + " 实际值为：" + check_filed_value + " 与期望值：" + expect_filed + " 不符"
+                msg = "字段: " + check_filed + " 实际值为：" + str(check_filed_value) + " 与期望值：" + expect_filed + " 不符"
                 break
         return result, msg
 
@@ -171,22 +170,6 @@ class Execute():
             if "$" + param == param_val:
                 param_val = None
             return param_val
-    """
-    # 在reponse中获取某一参数的值
-    def get_param(self, param, dict_data):
-        if isinstance(json.loads(dict_data), dict):
-            param_val = self.get_param_reponse(param, json.loads(dict_data))
-        else:
-            list_data = json.loads(dict_data)
-            dict_data = {}
-            for i in range(len(list_data)):
-                try:
-                    dict_data[str(i)] = json.loads(list_data[i])
-                except:
-                    dict_data[str(i)] = list_data[i]
-            param_val = self.get_param_reponse(param, dict_data)
-        return param_val
-        """
 
     def get_param_reponse(self, param_name, dict_data, default=None):
         for k, v in dict_data.items():
@@ -209,10 +192,9 @@ class Execute():
 
 
 
-
     # 获取测试环境
     def get_env(self, env_id):
-        env = Environment.objects.get(sign_id=env_id)
+        env = Environment.objects.get(env_id=env_id)
         prj_id = env.project.prj_id
         return prj_id, env.url, env.private_key
 
@@ -235,5 +217,5 @@ class Execute():
                 res = requests.post(url=url, data=data, headers=header, verify=False)
         if method == "get":
             res = requests.get(url=url, params=data, headers=header, verify=False)
-        return res.text
+        return res
 

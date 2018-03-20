@@ -127,7 +127,7 @@
                     var listdata = eval(data);
                     $(listdata).each(function (i, item) {
                         $("#debug_env_id").empty();
-                        $("#debug_env_id").append("<option value=" + item.id + ">" + item.env_name + "</option>");
+                        $("#debug_env_id").append("<option value=" + item.env_id + ">" + item.env_name + "</option>");
                     })
                 },
                 error: function () {
@@ -145,8 +145,10 @@
                     "env_id": $("#debug_env_id").val(),
                 },
                 success: function (res) {
-                    alert(res);
-                    $("#run_return_parameter").val(res);
+
+                    alert(res["step_list"]);
+
+                    $("#run_return_parameter").val(JSON.stringify(res));
                     //var res_data = eval("(" + res + ")");
                     //alert(res_data);
                     //$("#run_return_parameter").val(res_data.url + "\n" + res_data.header + "\n" + res_data.sendata + "\n" + res_data.revcdata);
