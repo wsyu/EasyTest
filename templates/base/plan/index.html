@@ -11,7 +11,7 @@
                     <a class="this">基础信息</a>
                 </li>
                 <li class="active">
-                    <a class="this-page">项目管理</a>
+                    <a class="this-page">测试计划管理</a>
                 </li>
             </ol>
 
@@ -24,30 +24,34 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-heading">
-                   <a href="/base/project_add/" class="btn btn-primary">添加项目</a>
+                   <a href="/base/plan_add/" class="btn btn-primary">添加计划</a>
                 </div>
                 <div class="panel-body">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>项目名称</th>
-                            <th>项目描述</th>
-                            <th>加密方式</th>
+                            <th>计划名称</th>
+                            <th>所属项目</th>
+                            <th>测试环境</th>
+                            <th>计划内容</th>
+                            <th>描述</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for prj in prj_list %}
+                        {% for plan in plan_list %}
                             <tr>
-                                <td>{{ prj.prj_id }}</td>
-                                <td>{{ prj.prj_name }}</td>
-                                <td>{{ prj.description }}</td>
-                                <td>{{ prj.sign }}</td>
+                                <td>{{ plan.plan_id }}</td>
+                                <td>{{ plan.plan_name }}</td>
+                                <td>{{ plan.project }}</td>
+                                <td>{{ plan.environment }}</td>
+                                <td>{{ plan.content }}</td>
+                                <td>{{ plan.description  }}</td>
                                 <td>
-                                    <a href="/base/project_update?prj_id={{ prj.prj_id }}" class="layui-btn layui-btn-xs"
+                                    <a href="/base/plan_update?plan_id={{ plan.plan_id }}" class="layui-btn layui-btn-xs"
                                        lay-event="edit">编辑</a>
-                                    <a href="/base/project_delete?prj_id={{ prj.prj_id }}"
+                                    <a href="/base/plan_delete?plan_id={{ plan.plan_id }}"
                                        class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                                 </td>
                             </tr>

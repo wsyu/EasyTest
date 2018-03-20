@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from base.models import Project, Sign, Environment, Interface, Case
+from base.models import Project, Sign, Environment, Interface, Case, Plan
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.core import serializers
@@ -175,6 +175,11 @@ def case_run(request):
         case_result = execute.run_case()
         return JsonResponse(case_result)
 
+
+# 计划增删改查
+def plan_index(request):
+    plan_list = Plan.objects.all()
+    return render(request, "base/plan/index.html", {"plan_list": plan_list})
 
 
 

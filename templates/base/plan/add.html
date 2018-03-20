@@ -1,0 +1,72 @@
+{% extends "../../base.html" %}
+
+{% block crumbs %}
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/yqjr/index">主页</a>
+            </li>
+            <li class="active">
+                <a class="this">基础信息</a>
+            </li>
+            <li class="active">
+                <a class="this-page" href="/base/project/">项目管理</a>
+            </li>
+            <li class="active">
+                <a class="">添加项目</a>
+            </li>
+        </ol>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加项目</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="/base/project_add/">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">项目名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="prj_name" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">项目描述</label>
+                        <div class="col-sm-6">
+                            <textarea name="description" placeholder="请输入内容" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">加密方式</label>
+                        <div class="col-sm-6">
+                            <select name="sign" class="form-control">
+                                {% for sign in sign_list %}
+                                <option value={{ sign.sign_id }}>{{ sign.sign_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock%}

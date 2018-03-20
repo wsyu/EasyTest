@@ -1,0 +1,59 @@
+{% extends "../../base.html" %}
+
+{% block body %}
+
+<div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a class="this" href="">基础信息</a>
+                <a class="this-page" href="">项目管理</a>
+                <a><cite>编辑项目</cite></a>
+            </span>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md8 layui-col-md-offset1">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>编辑项目</legend>
+                </fieldset>
+                <form class="layui-form" action="/base/project_update/" method="post">
+                <input name="prj_id" value ={{prj.prj_id }} hidden>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">项目名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="prj_name" lay-verify="title" autocomplete="off" value ={{prj.prj_name }}  class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">项目描述</label>
+                        <div class="layui-input-block">
+                            <textarea name="description"  class="layui-textarea">{{prj.description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">加密方式</label>
+                        <div class="layui-input-block">
+                            <select name="sign_id" lay-filter="aihao">
+                                <option value={{prj.sign.sign_id}}> {{ prj.sign }}</option>
+                                {% for sign in sign_list %}
+                                    <option value={{ sign.sign_id }}>{{ sign.sign_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="demo1">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock%}

@@ -62,3 +62,13 @@ class Case(models.Model):
     def __str__(self):
         return self.case_name
 
+class Plan(models.Model):
+    plan_id = models.AutoField(primary_key=True, null=False)
+    plan_name = models.CharField(max_length=50)
+    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    environment = models.ForeignKey('Environment', on_delete=models.CASCADE)
+    description = models.CharField(max_length=200)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.plan_name
