@@ -72,3 +72,16 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.plan_name
+
+class Report(models.Model):
+    report_id = models.AutoField(primary_key=True, null=False)
+    report_name = models.CharField(max_length=255)
+    plan = models.ForeignKey('Plan', on_delete=models.CASCADE)
+    content = models.TextField()
+    case_num = models.IntegerField(null=True)
+    pass_num = models.IntegerField(null=True)
+    fail_num = models.IntegerField(null=True)
+    error_num = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.report_name

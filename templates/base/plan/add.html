@@ -11,10 +11,10 @@
                 <a class="this">基础信息</a>
             </li>
             <li class="active">
-                <a class="this-page" href="/base/project/">项目管理</a>
+                <a class="this-page" href="/base/project/">测试计划管理</a>
             </li>
             <li class="active">
-                <a class="">添加项目</a>
+                <a class="">添加计划</a>
             </li>
         </ol>
 
@@ -29,30 +29,43 @@
     <div class="col-md-12">
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">添加项目</h3>
+                <h3 class="panel-title">添加计划</h3>
             </div>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="/base/project_add/">
+                <form class="form-horizontal" method="post" action="/base/plan_add/">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">项目名称</label>
+                        <label class="col-sm-2 control-label">计划名称</label>
                         <div class="col-sm-6">
-                            <input type="text" name="prj_name" class="form-control">
+                            <input type="text" name="plan_name" class="form-control">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">项目描述</label>
+                        <label class="col-sm-2 control-label">选择项目</label>
+                        <div class="col-sm-6">
+                            <select class="form-control m-b" id="prj_id" name="prj_id" onchange=get_env()>
+                                <option value="">请选择项目</option>
+                                {% for prj in prj_list %}
+                                <option value="{{prj.prj_id}}">{{prj.prj_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">选择环境</label>
+                        <div class="col-sm-6"><select class="form-control m-b" id="env_id" name="env_id">
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
                         <div class="col-sm-6">
                             <textarea name="description" placeholder="请输入内容" class="form-control" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">加密方式</label>
-                        <div class="col-sm-6">
-                            <select name="sign" class="form-control">
-                                {% for sign in sign_list %}
-                                <option value={{ sign.sign_id }}>{{ sign.sign_name }}</option>
-                                {% endfor %}
-                            </select>
+                        <label class="col-sm-2 control-label">用例列表</label>
+                        <a id="getcases" onclick="get_cases()" class="btn btn-primary">获取用例</a>
+                        <div id="list" class="col-sm-10 col-sm-offset-2">
                         </div>
                     </div>
                     <div class="form-group">
@@ -70,3 +83,65 @@
 </div>
 
 {% endblock%}
+
+{% block javascript %}
+<script type="text/javascript">
+    function get_env() {
+        var prj_id = $('#prj_id').val();
+        if (prj_id == null) {
+            alert("请先选择项目");
+        }
+        else {
+            $.ajax({
+                type: "get",
+                url: "/base/findata/",
+                data:
+                    {
+                        "prj_id": prj_id,
+                        "type": "get_env_by_prj_id"
+                    },
+                success: function (data) {
+                    var listdata = eval(data);
+                    $(listdata).each(function (i, item) {
+                        $("#env_id").empty();
+                        $("#env_id").append("<option value=" + item.env_id + ">" + item.env_name + "</option>");
+                    })
+                },
+                error: function () {
+                    alert("获取测试环境失败！");
+                }
+            });
+        }
+
+    }
+
+    function get_cases() {
+        $("#list").empty();
+        var prj_id = $("#prj_id").val();
+        if (prj_id == null) {
+            alert("请先选择项目");
+        }
+        else {
+            $.ajax({
+                type: "get",
+                url: "/base/findata",
+                data: {
+                    "prj_id": prj_id,
+                    "type": "get_all_case_by_prj_id"
+                },
+                success: function (data) {
+                    var listdata = eval(data);
+                    $(listdata).each(function (i, item) {
+                        $("#list").append("<label class='checkbox-inline'><input type='checkbox' name='case_id' value=" + item.case_id + ">" + item.case_name + "</label>");
+                    })
+                },
+                error: function () {
+                    alert("获取用例失败");
+                }
+            });
+        }
+    }
+
+
+</script>
+{% endblock %}

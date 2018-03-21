@@ -40,6 +40,10 @@ urlpatterns = [
     url(r'/case_run/', case_run),
 
     url(r'/plan/', plan_index),
+    url(r'/plan_add/', plan_add),
+    url(r'/plan_run/', plan_run),
+
+    url(r'/report/', report_index),
 
     url(r'/findata/', findata)
 ]

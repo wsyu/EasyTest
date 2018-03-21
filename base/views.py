@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from base.models import Project, Sign, Environment, Interface, Case, Plan
+from base.models import Project, Sign, Environment, Interface, Case, Plan, Report
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.core import serializers
 from lib.execute import Execute
+import time
 import json
 # Create your views here.
 
@@ -181,6 +182,58 @@ def plan_index(request):
     plan_list = Plan.objects.all()
     return render(request, "base/plan/index.html", {"plan_list": plan_list})
 
+def plan_add(request):
+    if request.method == 'POST':
+        plan_name = request.POST['plan_name']
+        prj_id = request.POST['prj_id']
+        project = Project.objects.get(prj_id=prj_id)
+        env_id = request.POST['env_id']
+        environment = Environment.objects.get(env_id=env_id)
+        description = request.POST['description']
+        content = request.POST.getlist("case_id")
+        plan = Plan(plan_name=plan_name, project=project, environment=environment, description=description, content=content)
+        plan.save()
+        return HttpResponseRedirect("/base/plan/")
+    prj_list = Project.objects.all()
+    return render(request, "base/plan/add.html", {"prj_list": prj_list})
+
+def plan_run(request):
+    if request.method == 'POST':
+        plan_id = request.POST['plan_id']
+        plan = Plan.objects.get(plan_id=plan_id)
+        env_id = plan.environment.env_id
+        case_id_list = eval(plan.content)
+        case_num = len(case_id_list)
+        content = []
+        pass_num = 0
+        fail_num = 0
+        error_num = 0
+        for case_id in case_id_list:
+            execute = Execute(case_id, env_id)
+            case_result = execute.run_case()
+            content.append(case_result)
+            if case_result["result"] == "pass":
+                pass_num += 1
+            if case_result["result"] == "fail":
+                fail_num += 1
+            if case_result["result"] == "error":
+                error_num += 1
+        report_name = plan.plan_name + "-" + time.strftime("%Y%m%d%H%M%S")
+        if Report.objects.filter(plan=plan):
+            Report.objects.filter(plan=plan).update(report_name=report_name, content=content, case_num=case_num,
+                                                    pass_num=pass_num, fail_num=fail_num, error_num=error_num)
+        else:
+            report = Report(plan=plan, report_name=report_name, content=content, case_num=case_num,
+                            pass_num=pass_num, fail_num=fail_num, error_num=error_num)
+            report.save()
+        return HttpResponse(plan.plan_name + " 执行成功！")
+
+
+def report_index(request):
+    plan_id = request.GET['plan_id']
+    report = Report.objects.get(plan_id=plan_id)
+    report_content = eval(report.content)
+    return render(request, "report.html", {"report": report})
 
 
 def findata(request):
@@ -203,4 +256,9 @@ def findata(request):
             prj_id = request.GET["prj_id"]
             # 查询并将结果转换为json
             env = Environment.objects.filter(project_id=prj_id).values()
+            return JsonResponse(list(env), safe=False)
+        if get_type == "get_all_case_by_prj_id":
+            prj_id = request.GET["prj_id"]
+            # 查询并将结果转换为json
+            env = Case.objects.filter(project_id=prj_id).values()
             return JsonResponse(list(env), safe=False)

@@ -1,66 +1,95 @@
 {% extends "../../base.html" %}
 
 {% block crumbs %}
-    <div class="row">
-        <div class="col-md-12">
-            <ol class="breadcrumb">
-                <li>
-                    <a href="/yqjr/index">主页</a>
-                </li>
-                <li class="active">
-                    <a class="this">基础信息</a>
-                </li>
-                <li class="active">
-                    <a class="this-page">测试计划管理</a>
-                </li>
-            </ol>
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/yqjr/index">主页</a>
+            </li>
+            <li class="active">
+                <a class="this">基础信息</a>
+            </li>
+            <li class="active">
+                <a class="this-page">测试计划管理</a>
+            </li>
+        </ol>
 
-        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel">
-                <div class="panel-heading">
-                   <a href="/base/plan_add/" class="btn btn-primary">添加计划</a>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>计划名称</th>
-                            <th>所属项目</th>
-                            <th>测试环境</th>
-                            <th>计划内容</th>
-                            <th>描述</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for plan in plan_list %}
-                            <tr>
-                                <td>{{ plan.plan_id }}</td>
-                                <td>{{ plan.plan_name }}</td>
-                                <td>{{ plan.project }}</td>
-                                <td>{{ plan.environment }}</td>
-                                <td>{{ plan.content }}</td>
-                                <td>{{ plan.description  }}</td>
-                                <td>
-                                    <a href="/base/plan_update?plan_id={{ plan.plan_id }}" class="layui-btn layui-btn-xs"
-                                       lay-event="edit">编辑</a>
-                                    <a href="/base/plan_delete?plan_id={{ plan.plan_id }}"
-                                       class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-heading">
+                <a href="/base/plan_add/" class="btn btn-primary">添加计划</a>
             </div>
-
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>计划名称</th>
+                        <th>所属项目</th>
+                        <th>测试环境</th>
+                        <th>计划内容</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                        <th>报告</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for plan in plan_list %}
+                    <tr>
+                        <td>{{ plan.plan_id }}</td>
+                        <td>{{ plan.plan_name }}</td>
+                        <td>{{ plan.project }}</td>
+                        <td>{{ plan.environment }}</td>
+                        <td>{{ plan.content }}</td>
+                        <td>{{ plan.description }}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="run_button(this);">执行计划</button>
+                            <a href="/base/plan_update?plan_id={{ plan.plan_id }}" class="layui-btn layui-btn-xs"
+                               lay-event="edit">编辑</a>
+                            <a href="/base/plan_delete?plan_id={{ plan.plan_id }}"
+                               class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="/base/report/?plan_id={{plan.plan_id}}"><i class="fa fa-edit"></i>&nbsp;查看报告</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+
+function run_button(obj) {
+        alert("开始执行...");
+        var plan_id = obj.parentNode.parentNode.children[0].innerText;
+        $.ajax({
+            type: "post",
+            url: "/base/plan_run/",
+            data: {"plan_id": plan_id},
+            success: function (data) {
+                alert(data);
+            },
+            error: function () {
+                alert("执行失败");
+            }
+        });
+
+    }
+
+</script>
 {% endblock %}

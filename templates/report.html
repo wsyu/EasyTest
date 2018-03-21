@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <style type="text/css" media="screen">
+        body {
+            font-family: verdana, arial, helvetica, sans-serif;
+            font-size: 80%;
+        }
+
+        table {
+            font-size: 100%;
+        }
+
+        pre {
+        }
+
+        /* -- heading ---------------------------------------------------------------------- */
+        h1 {
+            font-size: 16pt;
+            color: gray;
+        }
+
+        .heading {
+            margin-top: 0ex;
+            margin-bottom: 1ex;
+        }
+
+        .heading .attribute {
+            margin-top: 1ex;
+            margin-bottom: 0;
+        }
+
+        .heading .description {
+            margin-top: 4ex;
+            margin-bottom: 6ex;
+        }
+
+        /* -- css div popup ------------------------------------------------------------------------ */
+        a.popup_link {
+        }
+
+        a.popup_link:hover {
+            color: red;
+        }
+
+        .popup_window {
+            display: none;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            /*border: solid #627173 1px; */
+            padding: 10px;
+            background-color: #E6E6D6;
+            font-family: "Lucida Console", "Courier New", Courier, monospace;
+            text-align: left;
+            font-size: 8pt;
+            width: 500px;
+        }
+
+        }
+        /* -- report ------------------------------------------------------------------------ */
+        #show_detail_line {
+            margin-top: 3ex;
+            margin-bottom: 1ex;
+        }
+
+        #result_table {
+            width: 80%;
+            border-collapse: collapse;
+            border: 1px solid #777;
+        }
+
+        #header_row {
+            font-weight: bold;
+            color: white;
+            background-color: #777;
+        }
+
+        #result_table td {
+            border: 1px solid #777;
+            padding: 2px;
+        }
+
+        #total_row {
+            font-weight: bold;
+        }
+
+        .passClass {
+            background-color: #6c6;
+        }
+
+        .failClass {
+            background-color: #c60;
+        }
+
+        .errorClass {
+            background-color: #c00;
+        }
+
+        .passCase {
+            color: #6c6;
+        }
+
+        .failCase {
+            color: #c60;
+            font-weight: bold;
+        }
+
+        .errorCase {
+            color: #c00;
+            font-weight: bold;
+        }
+
+        .hiddenRow {
+            display: none;
+        }
+
+        .testcase {
+            margin-left: 2em;
+        }
+
+        /* -- ending ---------------------------------------------------------------------- */
+        #ending {
+        }
+
+    </style>
+
+</head>
+<body>
+<script language="javascript" type="text/javascript">
+
+    function showInfo(obj) {
+
+        var td_tag = obj.parentNode;
+        var details_div = td_tag.lastElementChild;
+        // var details_div = document.getElementById(div_id)
+        var displayState = details_div.style.display;
+        if (displayState != 'block') {
+            details_div.style.display = 'block';
+        }
+        else {
+            details_div.style.display = 'none'
+        }
+    }
+
+    function showAll() {
+        var trs = document.getElementsByTagName("tr");
+        for (var i = 1; i < trs.length - 1; i++) {
+            trs[i].style.display = 'table-row';
+        }
+    }
+
+    function showPass() {
+        var trs = document.getElementsByTagName("tr");
+        for (var i = 1; i < trs.length - 1; i++) {
+            if (trs[i].className == "passCase") {
+                trs[i].style.display = 'table-row';
+            }
+            else {
+                trs[i].style.display = 'none';
+            }
+        }
+    }
+
+    function showFail() {
+        var trs = document.getElementsByTagName("tr");
+        for (var i = 1; i < trs.length - 1; i++) {
+            if (trs[i].className == "failCase") {
+                trs[i].style.display = 'table-row';
+            }
+            else {
+                trs[i].style.display = 'none';
+            }
+        }
+    }
+
+    function showError() {
+        var trs = document.getElementsByTagName("tr");
+        for (var i = 1; i < trs.length - 1; i++) {
+            if (trs[i].className == "errorCase") {
+                trs[i].style.display = 'table-row';
+            }
+            else {
+                trs[i].style.display = 'none';
+            }
+        }
+    }
+
+
+</script>
+
+<div class='heading'>
+    <h1>{{report.report_name}} 测试报告</h1>
+    <!--
+<p class='attribute'><strong>Start Time:</strong> 2018-01-30 17:37:59</p>
+<p class='attribute'><strong>Duration:</strong> 0:00:00.005002</p>
+-->
+    <p class='attribute'><strong>Status:</strong>Count:{{report.case_num}} Pass:{{report.pass_num}}
+        Fail:{{report.fail_num}} Error:0</p>
+
+    <p class='description'>用例执行情况如下：</p>
+</div>
+
+
+<p id='show_detail_line'>Show
+    <a href="javascript:void(0);" onclick="showAll()">所有用例</a>
+    <a href="javascript:void(0);" onclick="showPass()">只看成功</a>
+    <a href="javascript:void(0);" onclick="showFail()">只看失败</a>
+    <a href="javascript:void(0);" onclick="showError()">只看异常</a>
+</p>
+<table id='result_table'>
+    <colgroup>
+        <col align='left'/>
+        <col align='right'/>
+        <col align='right'/>
+        <col align='right'/>
+        <col align='right'/>
+        <col align='right'/>
+    </colgroup>
+    <tr id='header_row'>
+        <td>用例列表</td>
+        <td>Count</td>
+        <td>Pass</td>
+        <td>Fail</td>
+        <td>Error</td>
+    </tr>
+
+    {% for case in report.content %}
+    {% if case.result == "pass" %}
+    <tr class='passCase'>
+        <td>
+            <div class='testcase'>{{case.case_name}}</div>
+        </td>
+        <td colspan='4' align='center'>pass</td>
+
+    </tr>
+    {% elif case.result == "fail" %}
+    <tr class='failCase'>
+        <td>
+            <div class='testcase'>{{case.case_name}}</div>
+        </td>
+        <td colspan='4' align='center'>
+            <a class='failCase' href="javascript:void(0);" onclick="showInfo(this)" href="">fail</a>
+            <div class="popup_window">
+                {% for step in case.step_list %}
+                {% if step.result == "pass" %}
+                <pre class="passCase">{{step.api_name}}      pass <br></pre>
+                {% elif step.result == "fail" %}
+                <pre class="failCase">{{step.msg}}
+                            <br></pre>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </td>
+    </tr>
+    {% elif case["result"] == "error" %}
+    <tr class='errorCase'>
+        <td>
+            <div class='testcase'>{{case.case_name"]}}</div>
+        </td>
+        <td colspan='4' align='center'>error</td>
+    </tr>
+    {% end %}
+    {% end %}
+
+    <tr id='total_row'>
+        <td>Total</td>
+        <td>{{report.case_num}}</td>
+        <td>{{report.pass_num}}</td>
+        <td>{{report.fail_num}}</td>
+        <td>0</td>
+    </tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+
+</body>
+</html>

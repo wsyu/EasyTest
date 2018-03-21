@@ -46,7 +46,7 @@
                         <td prj_id="{{ case.project.prj_id }}">{{ case.project }}</td>
                         <td>{{ case.description }}</td>
                         <td>
-                            <button class="#runCaseForm" onclick="debug_button(this);" data-toggle="modal" data-target="#runCaseForm">运行</button>
+                            <button class="#runCaseForm btn btn-primary" onclick="debug_button(this);" data-toggle="modal" data-target="#runCaseForm">运行</button>
                             <a href="" class="">编辑</a>
                             <a href="" class="">删除</a>
                         </td>
@@ -145,9 +145,6 @@
                     "env_id": $("#debug_env_id").val(),
                 },
                 success: function (res) {
-
-                    alert(res["step_list"]);
-
                     $("#run_return_parameter").val(JSON.stringify(res));
                     //var res_data = eval("(" + res + ")");
                     //alert(res_data);

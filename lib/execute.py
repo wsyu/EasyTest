@@ -18,7 +18,7 @@ class Execute():
         self.sign_type = self.get_sign(self.prj_id)
 
 
-        self.extract_list = []
+        self.extract_dict = {}
 
         self.glo_var = {}
         self.step_json = []
@@ -26,34 +26,22 @@ class Execute():
     def run_case(self):
         case = Case.objects.get(case_id=self.case_id)
         step_list = eval(case.content)
-        case_run = {"case_id": self.case_id, "case_name": case.case_name}
+        case_run = {"case_id": self.case_id, "case_name": case.case_name, "result": "pass"}
         case_step_list = []
+
         for step in step_list:
             step_info = self.step(step)
             case_step_list.append(step_info)
-            if step_info["result"] != "pass":
+            if step_info["result"] == "fail":
+                case_run["result"] = "fail"
+                break
+            if step_info["result"] == "error":
+                case_run["result"] = "error"
                 break
         case_run["step_list"] = case_step_list
         return case_run
 
 
-
-
-
-
-        """
-        case_result = {"result": "pass"}
-        case_result["case_id"] = self.case_id
-        case_result["case_name"] = case.case_name
-        step_result_list = []
-        for step in step_list:
-            step_result = self.step(step)
-            step_result_list.append(step_result)
-            if step_result["result"] == "fail":
-                case_result["result"] = "fail"
-        case_result["step_list"] = step_result_list
-        return case_result
-        """
 
 
     def step(self, step_content):
@@ -89,7 +77,7 @@ class Execute():
             return if_dict
 
         if step_content["extract"]:
-                self.get_extract(step_content["extract"], if_dict["res_content"])
+            self.get_extract(step_content["extract"], if_dict["res_content"])
         if step_content["validators"]:
             if_dict["result"], if_dict["msg"] = self.validators_result(step_content["validators"], if_dict["res_content"])
         else:
@@ -118,9 +106,9 @@ class Execute():
 
     # 在response中提取参数, 并放到列表中
     def get_extract(self, extract_dict, res):
-        for key, value in extract_dict["extract"].items():
-            key_value = self.get_param(key, res.text)
-            self.extract_list[key] = key_value
+        for key, value in extract_dict.items():
+            key_value = self.get_param(key, res)
+            self.extract_dict[key] = key_value
 
 
 

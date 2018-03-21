@@ -41,6 +41,7 @@
                         <label class="col-sm-2 control-label">所属项目</label>
                         <div class="col-sm-8">
                             <select id="prj_id" class="form-control" onchange=get_if()>
+                                <option value=>请选择项目</option>
                                 {% for prj in prj_list %}
                                 <option value={{ prj.prj_id }}>{{ prj.prj_name }}</option>
                                 {% endfor %}
@@ -100,7 +101,7 @@
         function add_header_row(obj) {
             var panel = $(obj).parent().parent();
             var tbody = $(panel).find("table[name='header']").children('tbody');
-            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            var newRow = "<tr> <td>#</td><td name='var_name' contenteditable='true'></td><td name='var_value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
             $(tbody).append(newRow);
         }
 
@@ -108,7 +109,7 @@
         function add_body_row(obj) {
             var panel = $(obj).parent().parent();
             var tbody = $(panel).find("table[name='body']").children('tbody');
-            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            var newRow = "<tr> <td>#</td><td name='var_name' contenteditable='true'></td><td name='var_value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
             $(tbody).append(newRow);
         }
 
@@ -116,7 +117,7 @@
         function add_extract_row(obj) {
         var panel = $(obj).parent().parent();
         var tbody = $(panel).find("table[name='extract']").children('tbody');
-        var newRow = "<tr> <td>#</td><td name='name' contenteditable='true'></td><td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+        var newRow = "<tr> <td>#</td><td name='var_name' contenteditable='true'></td><td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
         $(tbody).append(newRow);
     }
 
@@ -125,7 +126,7 @@
         function add_validators_row(obj) {
             var panel = $(obj).parent().parent();
             var tbody = $(panel).find("table[name='validators']").children('tbody');
-            var newRow = "<tr> <td>#</td><td name='var' contenteditable='true'></td><td name='value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
+            var newRow = "<tr> <td>#</td><td name='var_name' contenteditable='true'></td><td name='var_value' contenteditable='true'></td> <td> <button class='btn btn-xs btn-outline btn-danger' type='button' onclick='del_step(this)'><i class='fa fa-times'>删除行</i></button> </td> </tr>";
             $(tbody).append(newRow);
         }
 
@@ -204,7 +205,6 @@
                                         "<div class='right'><button type=\"button\" class='btn-toggle-collapse'><i class='lnr lnr-chevron-up'></i></button></div>" +
                                         "</div>" +
                                         "<div class='panel-body'>" +
-                                        "<input type='hidden' name='url' value='" + item.url + "' class='btn btn-primary'>" +
                                         "<button onclick='add_header_row(this)' class='btn btn-primary'>添加header参数</button>" +
                                         "<button onclick='add_body_row(this)' class='btn btn-primary'>添加body参数</button> " +
                                         "<button onclick='add_extract_row(this)' class='btn btn-primary'>添加提取参数</button> " +
@@ -260,9 +260,8 @@
 
                 var step = {};
 
-                var api_id = $(this).find("div[class='panel-heading']").attr("id");
-                var api_name = $(this).find("div[class='panel-heading']").text();
-                var api_url = $(this).find("input[name='api_url']").val();
+                var if_id = $(this).find("div[class='panel-heading']").attr("id");
+                var if_name = $(this).find("div[class='panel-heading']").text();
                 var header_table = $(this).find("table[name='header']");
                 var header = {};
                 $(header_table).find("tr").each(function (i) {
@@ -302,9 +301,8 @@
                     validators.push(vl);
                 });
 
-                step["api_id"] = api_id;
-                step["api_name"] = api_name;
-                step["api_url"] = api_url;
+                step["if_id"] = if_id;
+                step["if_name"] = if_name;
                 step["header"] = header;
                 step["body"] = body;
                 step["extract"] = extract;
