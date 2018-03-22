@@ -229,8 +229,7 @@
         <td>Fail</td>
         <td>Error</td>
     </tr>
-
-    {% for case in report.content %}
+    {% for case in report_content %}
     {% if case.result == "pass" %}
     <tr class='passCase'>
         <td>
@@ -249,24 +248,36 @@
             <div class="popup_window">
                 {% for step in case.step_list %}
                 {% if step.result == "pass" %}
-                <pre class="passCase">{{step.api_name}}      pass <br></pre>
+                <pre class="passCase">{{step.if_name}}      pass <br></pre>
                 {% elif step.result == "fail" %}
-                <pre class="failCase">{{step.msg}}
-                            <br></pre>
+                <pre class="failCase">{{step.if_name}}   {{step.msg}}
+                    <br></pre>
                 {% endif %}
                 {% endfor %}
             </div>
         </td>
     </tr>
-    {% elif case["result"] == "error" %}
+    {% elif case.result == "error" %}
     <tr class='errorCase'>
         <td>
-            <div class='testcase'>{{case.case_name"]}}</div>
+            <div class='testcase'>{{case.case_name}}</div>
         </td>
-        <td colspan='4' align='center'>error</td>
+        <td colspan='4' align='center'>
+            <a class='errorCase' href="javascript:void(0);" onclick="showInfo(this)" href="">error</a>
+            <div class="popup_window">
+                {% for step in case.step_list %}
+                {% if step.result == "pass" %}
+                <pre class="passCase">{{step.if_name}}    pass <br></pre>
+                {% elif step.result == "error" %}
+                <pre class="errorCase">{{step.if_name}}    {{step.msg}}
+                    <br></pre>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </td>
     </tr>
-    {% end %}
-    {% end %}
+    {% endif %}
+    {% endfor %}
 
     <tr id='total_row'>
         <td>Total</td>
