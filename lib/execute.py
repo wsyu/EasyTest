@@ -47,19 +47,20 @@ class Execute():
     def step(self, step_content):
         if_id = step_content["if_id"]
         interface = Interface.objects.get(if_id=if_id)
-        if_dict = {"url": interface.url, "header": step_content["header"], "body": step_content["body"]}
-        var_list = self.extract_variables(if_dict)
+        var_list = self.extract_variables(step_content)
         # 检查是否存在变量
         if var_list:
             for var_name in var_list:
                 var_value = self.get_param(var_name, step_content)
                 if var_value is None:
                     var_value = self.get_param(var_name, self.step_json)
+                if var_value is None:
+                    var_value = self.extract_dict[var_name]
                 step_content = json.loads(self.replace_var(step_content, var_name, var_value))
-
+        if_dict = {"url": interface.url, "header": step_content["header"], "body": step_content["body"]}
         # 签名
         if interface.is_sign:
-            if_dict = get_sign(self.sign_type, if_dict, self.private_key)
+            if_dict["body"] = get_sign(self.sign_type, if_dict["body"], self.private_key)
         if_dict["url"] = self.env_url + interface.url
         if_dict["if_id"] = if_id
         if_dict["if_name"] = step_content["if_name"]
@@ -192,12 +193,13 @@ class Execute():
         sign_type: 签名方式
         """
         prj = Project.objects.get(prj_id=prj_id)
-        sign_type = prj.sign
+        sign_type = prj.sign.sign_id
         return sign_type
 
 
     # 发送请求
     def call_interface(self, method, url, header, data, content_type='json'):
+        print(url, header, data)
         if method == "post":
             if content_type == "json":
                 res = requests.post(url=url, json=data, headers=header, verify=False)
@@ -205,5 +207,6 @@ class Execute():
                 res = requests.post(url=url, data=data, headers=header, verify=False)
         if method == "get":
             res = requests.get(url=url, params=data, headers=header, verify=False)
+        print(res.status_code, res.text)
         return res
 
