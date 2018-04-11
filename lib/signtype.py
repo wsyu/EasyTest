@@ -46,5 +46,5 @@ def sign_3(data):
     temp = '{%s}' % temp[:-1]
     md5 = hashlib.md5()
     md5.update(temp.encode(encoding='utf-8'))
-    data = md5.hexdigest()
+    data['signature'] = md5.hexdigest()
     return data

@@ -74,7 +74,7 @@ class Execute():
             if_dict["res_content"] = res.text
         except requests.RequestException as e:
             if_dict["result"] = "Error"
-            if_dict["msg"] = e
+            if_dict["msg"] = str(e)
             return if_dict
 
         if step_content["extract"]:
