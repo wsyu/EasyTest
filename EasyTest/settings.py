@@ -90,10 +90,6 @@ DATABASES = {
         'USER': "root",
         'PASSWORD': "wsy",
         'PORT': "3306",
-        'OPTIONS': {
-            'autocommit': True,
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
     }
 }
 
