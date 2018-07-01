@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from base.models import Project, Sign, Environment, Interface, Case, Plan, Report
+from base.models import Project, Sign, Env, Case, Plan, Report, Api
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.core import serializers
@@ -7,7 +7,6 @@ from lib.execute import Execute
 import time
 import json
 # Create your views here.
-
 
 
 # 项目增删改查
@@ -32,14 +31,15 @@ def project_add(request):
     sign_list = Sign.objects.all()
     return render(request, "base/project/add.html", {"sign_list": sign_list})
 
+
 def project_update(request):
     if request.method == 'POST':
         prj_id = request.POST['prj_id']
         prj_name = request.POST['prj_name']
         name_exit = Project.objects.filter(prj_name=prj_name).exclude(prj_id=prj_id)
         if name_exit:
-            # messages.error(request, "项目已存在")
-            return HttpResponse("项目已存在")
+            messages.error(request, "项目已存在")
+            # return HttpResponse("项目已存在")
         else:
             description = request.POST['description']
             sign_id = request.POST['sign_id']
@@ -85,10 +85,12 @@ def sign_update(request):
     sign = Sign.objects.get(sign_id=sign_id)
     return render(request, "system/sign_update.html", {"sign": sign})
 
+
 # 测试环境增删改查
 def env_index(request):
-    env_list = Environment.objects.all()
+    env_list = Env.objects.all()
     return render(request, "base/env/index.html", {"env_list": env_list})
+
 
 def env_add(request):
     if request.method == 'POST':
@@ -98,8 +100,8 @@ def env_add(request):
         url = request.POST['url']
         private_key = request.POST['private_key']
         description = request.POST['description']
-        env = Environment(env_name=env_name, url=url, project=project,
-                           private_key=private_key, description=description)
+        env = Env(env_name=env_name, url=url, project=project,
+                  private_key=private_key, description=description)
         env.save()
         return HttpResponseRedirect("/base/env/")
     prj_list = Project.objects.all()
@@ -114,14 +116,44 @@ def env_update(request):
         url = request.POST['url']
         private_key = request.POST['private_key']
         description = request.POST['description']
-        Environment.objects.filter(env_id=env_id).update(env_name=env_name, url=url, project=project, private_key=private_key, description=description)
+        Env.objects.filter(env_id=env_id).update(env_name=env_name, url=url, project=project, private_key=private_key, description=description)
         return HttpResponseRedirect("/base/env/")
     env_id = request.GET['env_id']
-    env =Environment.objects.get(env_id=env_id)
+    env = Env.objects.get(env_id=env_id)
     prj_list = Project.objects.all()
     return render(request, "base/env/update.html", {"env": env, "prj_list": prj_list})
 
 
+# 接口增删改查
+def api_index(request):
+    api_list = Api.objects.all()
+    return render(request, "api/index.html", {"api_list": api_list})
+
+
+def api_add(request):
+    if request.method == 'POST':
+        if_name = request.POST['if_name']
+        prj_id = request.POST['prj_id']
+        project = Project.objects.get(prj_id=prj_id)
+        url = request.POST['url']
+        method = request.POST['method']
+        data_type = request.POST['data_type']
+        is_sign = request.POST['is_sign']
+        description = request.POST['description']
+        request_header_data = request.POST['request_header_data']
+        request_body_data = request.POST['request_body_data']
+        response_header_data = request.POST['response_header_data']
+        response_body_data = request.POST['response_body_data']
+        api = Api(if_name=if_name, url=url, project=project, method=method, data_type=data_type,
+                          is_sign=is_sign, description=description, request_header_param=request_header_data,
+                          request_body_param=request_body_data, response_header_param=response_header_data,
+                          response_body_param=response_body_data)
+        api.save()
+        return HttpResponseRedirect("/base/interface/")
+    prj_list = Project.objects.all()
+    return render(request, "base/interface/add.html", {"prj_list": prj_list})
+
+"""
 # 接口增删改查
 def interface_index(request):
     if_list = Interface.objects.all()
@@ -149,6 +181,8 @@ def interface_add(request):
         return HttpResponseRedirect("/base/interface/")
     prj_list = Project.objects.all()
     return render(request, "base/interface/add.html", {"prj_list": prj_list})
+"""
+
 
 # 接口增删改查
 def case_index(request):
@@ -188,7 +222,7 @@ def plan_add(request):
         prj_id = request.POST['prj_id']
         project = Project.objects.get(prj_id=prj_id)
         env_id = request.POST['env_id']
-        environment = Environment.objects.get(env_id=env_id)
+        environment = Env.objects.get(env_id=env_id)
         description = request.POST['description']
         content = request.POST.getlist("case_id")
         plan = Plan(plan_name=plan_name, project=project, environment=environment, description=description, content=content)
@@ -244,18 +278,18 @@ def findata(request):
         if get_type == "get_all_if_by_prj_id":
             prj_id = request.GET["prj_id"]
             # 返回字典列表
-            if_list = Interface.objects.filter(project=prj_id).all().values()
+            if_list = Api.objects.filter(project=prj_id).all().values()
             # list(if_list)将QuerySet转换成list
             return JsonResponse(list(if_list), safe=False)
         if get_type == "get_if_by_if_id":
             if_id = request.GET["if_id"]
             # 查询并将结果转换为json
-            interface = Interface.objects.filter(if_id=if_id).values()
+            interface = Api.objects.filter(if_id=if_id).values()
             return JsonResponse(list(interface), safe=False)
         if get_type == "get_env_by_prj_id":
             prj_id = request.GET["prj_id"]
             # 查询并将结果转换为json
-            env = Environment.objects.filter(project_id=prj_id).values()
+            env = Env.objects.filter(project_id=prj_id).values()
             return JsonResponse(list(env), safe=False)
         if get_type == "get_all_case_by_prj_id":
             prj_id = request.GET["prj_id"]

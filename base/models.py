@@ -11,7 +11,7 @@ class Sign(models.Model):
     class Meta:
         verbose_name = "签名"
         verbose_name_plural = verbose_name
-        db_name = "tb_sign"
+        db_table = "tb_sign"
 
     def __str__(self):
         return self.sign_name
@@ -24,7 +24,7 @@ class Project(models.Model):
     description = models.CharField(max_length=100, verbose_name="描述")
 
     class Meta:
-        db_name = "tb_project"
+        db_table = "tb_project"
         verbose_name = "项目"
         verbose_name_plural = verbose_name
 
@@ -32,7 +32,7 @@ class Project(models.Model):
         return self.prj_name
 
 
-class Environment(models.Model):
+class Env(models.Model):
     env_id = models.AutoField(primary_key=True, null=False, verbose_name="ID")
     env_name = models.CharField(max_length=50, null=False, verbose_name="测试环境名称")
     project = models.ForeignKey('Project', on_delete=models.CASCADE, verbose_name="所属项目")
@@ -41,7 +41,7 @@ class Environment(models.Model):
     private_key = models.CharField(max_length=50, verbose_name="密钥")
 
     class Meta:
-        db_name = "tb_env"
+        db_table = "tb_env"
         verbose_name = "测试环境"
         verbose_name_plural = verbose_name
 
@@ -63,10 +63,15 @@ class Api(models.Model):
     response_header_param = models.TextField()
     response_body_param = models.TextField()
 
+    class Meta:
+        db_table = "tb_api"
+        verbose_name = "接口"
+        verbose_name_plural = verbose_name
+
     def __str__(self):
-        return self.if_name
+        return self.api_name
 
-
+"""
 class Interface(models.Model):
     if_id = models.AutoField(primary_key=True, null=False)
     if_name = models.CharField(max_length=50)
@@ -83,28 +88,41 @@ class Interface(models.Model):
 
     def __str__(self):
         return self.if_name
+    """
 
 
 class Case(models.Model):
-    case_id = models.AutoField(primary_key=True, null=False)
-    case_name = models.CharField(max_length=50)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    description = models.CharField(max_length=200)
-    content = models.TextField()
+    case_id = models.AutoField(primary_key=True, null=False, verbose_name="用例ID")
+    case_name = models.CharField(max_length=50, verbose_name="用例名称")
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, verbose_name="所属项目")
+    description = models.CharField(max_length=200, verbose_name="描述")
+    content = models.TextField(verbose_name="内容")
+
+    class Meta:
+        db_table = "tb_case"
+        verbose_name = "用例"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.case_name
+
 
 class Plan(models.Model):
     plan_id = models.AutoField(primary_key=True, null=False)
     plan_name = models.CharField(max_length=50)
     project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    environment = models.ForeignKey('Environment', on_delete=models.CASCADE)
+    environment = models.ForeignKey('Env', on_delete=models.CASCADE)
     description = models.CharField(max_length=200)
     content = models.TextField()
 
+    class Meta:
+        db_table = "tb_plan"
+        verbose_name = "测试计划"
+        verbose_name_plural = verbose_name
+
     def __str__(self):
         return self.plan_name
+
 
 class Report(models.Model):
     report_id = models.AutoField(primary_key=True, null=False)
@@ -115,6 +133,11 @@ class Report(models.Model):
     pass_num = models.IntegerField(null=True)
     fail_num = models.IntegerField(null=True)
     error_num = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = "tb_report"
+        verbose_name = "测试报告"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.report_name
