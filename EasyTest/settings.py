@@ -90,10 +90,6 @@ DATABASES = {
         'USER': "root",
         'PASSWORD': "wsy",
         'PORT': "3306",
-        'OPTIONS': {
-            'autocommit': True,
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
     }
 }
 
@@ -136,4 +132,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]

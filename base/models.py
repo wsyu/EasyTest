@@ -4,35 +4,67 @@ from django.db import models
 
 
 class Sign(models.Model):
-    sign_id = models.AutoField(primary_key=True, null=False)
-    sign_name = models.CharField(max_length=50)
-    description = models.CharField(max_length=100)
+    sign_id = models.AutoField(primary_key=True, null=False, verbose_name="签名方式ID")
+    sign_name = models.CharField(max_length=50, verbose_name="签名方式")
+    description = models.CharField(max_length=100, verbose_name="描述")
+
+    class Meta:
+        verbose_name = "签名"
+        verbose_name_plural = verbose_name
+        db_name = "tb_sign"
 
     def __str__(self):
         return self.sign_name
 
+
 class Project(models.Model):
-    prj_id = models.AutoField(primary_key=True, null=False)
-    prj_name = models.CharField(max_length=50)
-    sign = models.ForeignKey('Sign', on_delete=models.CASCADE)
-    description = models.CharField(max_length=100)
+    prj_id = models.AutoField(primary_key=True, null=False, verbose_name="项目ID")
+    prj_name = models.CharField(max_length=50, null=False, verbose_name="项目名称")
+    sign = models.ForeignKey('Sign', on_delete=models.CASCADE, verbose_name="加密方式")
+    description = models.CharField(max_length=100, verbose_name="描述")
+
+    class Meta:
+        db_name = "tb_project"
+        verbose_name = "项目"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.prj_name
 
 
-
 class Environment(models.Model):
-    env_id = models.AutoField(primary_key=True, null=False)
-    env_name = models.CharField(max_length=50)
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
-    description = models.CharField(max_length=100)
-    url = models.CharField(max_length=100)
-    private_key = models.CharField(max_length=50)
+    env_id = models.AutoField(primary_key=True, null=False, verbose_name="ID")
+    env_name = models.CharField(max_length=50, null=False, verbose_name="测试环境名称")
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, verbose_name="所属项目")
+    description = models.CharField(max_length=100, verbose_name="描述")
+    url = models.CharField(max_length=100, verbose_name="URL")
+    private_key = models.CharField(max_length=50, verbose_name="密钥")
+
+    class Meta:
+        db_name = "tb_env"
+        verbose_name = "测试环境"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.env_name
 
+
+class Api(models.Model):
+    api_id = models.AutoField(primary_key=True, null=False, verbose_name="接口ID")
+    api_name = models.CharField(max_length=50, null=False, verbose_name="接口名")
+    api_url = models.CharField(max_length=50, verbose_name="访问地址")
+    method = models.CharField(max_length=4, verbose_name="请求方式")
+    data_type = models.CharField(max_length=4, verbose_name="数据传输方式")
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, verbose_name="所属项目")
+    is_sign = models.IntegerField(verbose_name="是否签名")
+    description = models.CharField(max_length=100, verbose_name="描述")
+    request_header_param = models.TextField()
+    request_body_param = models.TextField()
+    response_header_param = models.TextField()
+    response_body_param = models.TextField()
+
+    def __str__(self):
+        return self.if_name
 
 
 class Interface(models.Model):
@@ -51,6 +83,7 @@ class Interface(models.Model):
 
     def __str__(self):
         return self.if_name
+
 
 class Case(models.Model):
     case_id = models.AutoField(primary_key=True, null=False)

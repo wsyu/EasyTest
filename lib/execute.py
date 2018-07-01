@@ -16,10 +16,7 @@ class Execute():
         self.env_id = env_id
         self.prj_id, self.env_url, self.private_key = self.get_env(self.env_id)
         self.sign_type = self.get_sign(self.prj_id)
-
-
         self.extract_dict = {}
-
         self.glo_var = {}
         self.step_json = []
 
@@ -40,8 +37,6 @@ class Execute():
                 break
         case_run["step_list"] = case_step_list
         return case_run
-
-
 
 
     def step(self, step_content):
